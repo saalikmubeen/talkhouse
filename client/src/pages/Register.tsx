@@ -6,6 +6,7 @@ import { Tooltip } from "@mui/material";
 import Button from "@mui/material/Button";
 import AuthBox from "../components/AuthBox";
 import { validateRegisterForm } from "../utils/validators";
+import { useAppSelector } from "../store";
 
 const Wrapper = styled("div")({
     display: "flex",
@@ -49,6 +50,10 @@ const Register = () => {
     });
     const [isFormValid, setIsFormValid] = useState(false);
 
+    const { error, errorMessage, userDetails } = useAppSelector(
+        (state) => state.auth
+    );
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setCredentials({
             ...credentials,
@@ -61,6 +66,13 @@ const Register = () => {
     useEffect(() => {
         setIsFormValid(validateRegisterForm(credentials));
     }, [credentials]);
+
+
+    useEffect(() => {
+        if ("token" in userDetails) {
+            navigate("/dashboard");
+        }
+    }, [userDetails, navigate]);
 
     return (
         <AuthBox>

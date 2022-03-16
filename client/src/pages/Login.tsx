@@ -1,11 +1,14 @@
 import React, {useState, useEffect} from 'react'
 import {useNavigate} from "react-router-dom";
+import {useDispatch} from 'react-redux';
 import { Typography } from '@mui/material'
 import { styled } from "@mui/system";
 import { Tooltip } from "@mui/material";
 import Button from "@mui/material/Button";
 import AuthBox from '../components/AuthBox'
 import {validateLoginForm} from "../utils/validators"
+import {loginUser} from "../actions/authActions";
+import { useAppSelector } from '../store';
 
 
 const Wrapper = styled("div")({
@@ -44,11 +47,14 @@ const RedirectText = styled("span")({
 
 const Login = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch ();
     const [credentials, setCredentials] = useState({
         email: "",
         password: ""
     });
     const [isFormValid, setIsFormValid] = useState(false); 
+
+    const {error, errorMessage, userDetails} = useAppSelector(state => state.auth) 
 
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement> ) => {
@@ -58,16 +64,23 @@ const Login = () => {
         })
     }
 
-
     const handleLogin = () => {
-        
+        dispatch(loginUser(credentials))
     }
 
 
     useEffect(() => {
         setIsFormValid(validateLoginForm(credentials))
     }, [credentials])
-    console.log(isFormValid)
+
+
+    useEffect(() => {
+        
+        if ("token" in userDetails) {
+            navigate("/dashboard")
+        }
+
+    }, [userDetails, navigate])
 
   return (
       <AuthBox>
@@ -114,6 +127,7 @@ const Login = () => {
               {`Don't have an account? `}
               <RedirectText onClick={() => navigate("/register")}>Register here</RedirectText>
           </Typography>
+
       </AuthBox>
   );
 }
