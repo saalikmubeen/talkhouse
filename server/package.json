@@ -1,0 +1,25 @@
+{
+  "name": "discord-clone-backend",
+  "version": "1.0.0",
+  "description": "Backend of discord clone",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "author": "Saalik Mubeen",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "express-joi-validation": "^5.0.1",
+    "joi": "^17.6.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.2.6"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
