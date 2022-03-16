@@ -72,3 +72,13 @@ export const autoLogin = () => {
 
     }
 }
+
+
+export const logoutUser = () => {
+    return async (dispatch: Dispatch) => {
+        localStorage.removeItem("currentUser");
+        dispatch({
+            type: actionTypes.logout,
+        });
+    }
+}

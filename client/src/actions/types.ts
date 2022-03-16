@@ -21,6 +21,10 @@ interface AuthErrorAction {
     payload: string;
 }
 
+interface LogoutAction {
+    type: actionTypes.logout;
+}
+
 interface ShowAlertAction {
     type: actionTypes.showAlert,
     payload: string,
@@ -30,5 +34,5 @@ interface HideAlertAction {
     type: actionTypes.hideAlert
 }
 
-export type AuthActions = AuthSuccessAction | AuthErrorAction; 
+export type AuthActions = AuthSuccessAction | AuthErrorAction | LogoutAction; 
 export type AlertActions = ShowAlertAction | HideAlertAction;

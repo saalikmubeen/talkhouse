@@ -32,6 +32,13 @@ const authReducer = (state=initialState, action: AuthActions): AuthState => {
                 error: true,
                 errorMessage: action.payload,
             }
+
+        case actionTypes.logout:
+            return {
+                error: false,
+                errorMessage: "",
+                userDetails: {}
+            }
         
         default:
             return state
