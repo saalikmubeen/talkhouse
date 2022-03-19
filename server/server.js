@@ -19,6 +19,8 @@ app.use(cors());
 app.use("/api/auth", authRoutes);
 
 const server = http.createServer(app);
+
+// socket connection
 socketServer(server);
 
 mongoose
