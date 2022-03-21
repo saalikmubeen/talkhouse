@@ -6,8 +6,9 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 
 const authRoutes = require("./routes/authRoutes");
+const friendInvitationRoutes = require("./routes/friendInvitationRoutes");
 
-const socketServer = require("./socketServer");
+const socketServer = require("./socket/socketServer");
 
 const PORT = process.env.PORT || 5000;
 
@@ -17,6 +18,7 @@ app.use(cors());
 
 // register the routes
 app.use("/api/auth", authRoutes);
+app.use("/api/invite-friend", friendInvitationRoutes);
 
 const server = http.createServer(app);
 
