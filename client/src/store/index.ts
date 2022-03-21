@@ -1,23 +1,26 @@
-import {createStore, combineReducers, applyMiddleware} from 'redux'
+import { createStore, combineReducers, applyMiddleware } from "redux";
 import thunk from "redux-thunk";
-import {composeWithDevTools}  from "redux-devtools-extension";
+import { composeWithDevTools } from "redux-devtools-extension";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
-import { authReducer } from '../reducers/authReducer';
-import { alertReducer } from '../reducers/alertReducer';
+import { authReducer } from "../reducers/authReducer";
+import { alertReducer } from "../reducers/alertReducer";
+import { friendsReducer } from "../reducers/friendsReducer";
 
 const rootReducer = combineReducers({
     auth: authReducer,
-    alert: alertReducer
+    alert: alertReducer,
+    friends: friendsReducer,
 });
 
-
-const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk)));
-
+const store = createStore(
+    rootReducer,
+    composeWithDevTools(applyMiddleware(thunk))
+);
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
-type RootState = ReturnType<typeof store.getState>
+type RootState = ReturnType<typeof store.getState>;
 // Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
-type AppDispatch = typeof store.dispatch
+type AppDispatch = typeof store.dispatch;
 
 // const useAppDispatch = () => useDispatch<AppDispatch>();
 const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;

@@ -1,14 +1,16 @@
 import axios from "axios";
-import { LoginArgs, AuthResponse, RegisterArgs } from "./types";
+import {
+    LoginArgs,
+    AuthResponse,
+    RegisterArgs,
+    inviteFriendArgs,
+} from "./types";
 
-const BASE_URL = "http://localhost:5000"
+const BASE_URL = "http://localhost:5000";
 
 const api = axios.create({
-    baseURL: BASE_URL,
-
-})
-
-
+    baseURL: BASE_URL
+});
 
 api.interceptors.request.use(
     (config) => {
@@ -16,7 +18,8 @@ api.interceptors.request.use(
 
         if (userDetails) {
             const token = JSON.parse(userDetails).token;
-            config!.headers!.Authorization = `Bearer ${token}`;
+            console.log(token);
+            config.headers!["Authorization"] = `Bearer ${token}`;
         }
 
         return config;
@@ -27,20 +30,35 @@ api.interceptors.request.use(
 );
 
 
-export const login = async ({email, password}: LoginArgs) => {
-    try{
-        const res = await api.post<AuthResponse>("/api/auth/login", {email, password});
-        
-        return res.data;
 
-    }catch(err: any) {
+const logOut = () => {
+    localStorage.clear();
+    window.location.pathname = "/login";
+};
+
+const checkForAuthorization = (error: any) => {
+    const responseCode = error?.response?.status;
+
+    if (responseCode) {
+        (responseCode === 401 || responseCode === 403) && logOut();
+    }
+};
+
+export const login = async ({ email, password }: LoginArgs) => {
+    try {
+        const res = await api.post<AuthResponse>("/api/auth/login", {
+            email,
+            password,
+        });
+
+        return res.data;
+    } catch (err: any) {
         return {
             error: true,
-            message: err.response.data
-        }
+            message: err.response.data,
+        };
     }
-}
-
+};
 
 export const register = async ({ email, password, username }: RegisterArgs) => {
     try {
@@ -54,7 +72,25 @@ export const register = async ({ email, password, username }: RegisterArgs) => {
     } catch (err: any) {
         return {
             error: true,
-            message: err.response.data
+            message: err.response.data,
+        };
+    }
+};
+
+// protected routes
+
+export const inviteFriendRequest = async ({ email }: inviteFriendArgs) => {
+    try {
+        const res = await api.post("/api/invite-friend/invite", {
+            email,
+        });
+
+        return res.data;
+    } catch (err: any) {
+        checkForAuthorization(err);
+        return {
+            error: true,
+            message: err.response.data,
         };
     }
 };

@@ -3,7 +3,10 @@ export enum actionTypes {
     logout,
     authError,
     showAlert,
-    hideAlert
+    hideAlert,
+    setFriends,
+    setPendingInvitations,
+    setOnlineUsers,
 }
 
 

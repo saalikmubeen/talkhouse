@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogActions from "@mui/material/DialogActions";
@@ -8,6 +9,7 @@ import Typography from "@mui/material/Typography";
 import { validateMail } from "../../../utils/validators";
 import { Button } from "@mui/material";
 import styled from "@emotion/styled";
+import { inviteFriend } from "../../../actions/friendActions";
 
 const Wrapper = styled("div")({
     display: "flex",
@@ -49,10 +51,16 @@ const AddFriendDialog = ({
     const [email, setEmail] = useState("");
     const [isFormValid, setIsFormValid] = useState(false);
 
+    const dispatch = useDispatch();
+
     const handleCloseDialog = () => {
         closeDialogHandler();
         setEmail("");
     };
+
+    const handleClick = () => {
+        dispatch(inviteFriend(email, handleCloseDialog));
+    }
 
     useEffect(() => {
         setIsFormValid(validateMail(email));
@@ -98,6 +106,7 @@ const AddFriendDialog = ({
                             marginBottom: "10px",
                         }}
                         disabled={!isFormValid}
+                        onClick={handleClick}
                     >
                         Invite
                     </Button>

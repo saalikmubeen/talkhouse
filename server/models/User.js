@@ -9,6 +9,8 @@ const userSchema = new mongoose.Schema(
         },
         username: { type: String },
         password: { type: String, required: [true, "can't be blank"] },
+
+        friends: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     },
     { timestamps: true }
 );

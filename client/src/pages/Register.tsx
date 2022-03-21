@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Typography } from "@mui/material";
 import { styled } from "@mui/system";
@@ -7,6 +8,7 @@ import Button from "@mui/material/Button";
 import AuthBox from "../components/AuthBox";
 import { validateRegisterForm } from "../utils/validators";
 import { useAppSelector } from "../store";
+import { registerUser } from "../actions/authActions";
 
 const Wrapper = styled("div")({
     display: "flex",
@@ -54,6 +56,8 @@ const Register = () => {
         (state) => state.auth
     );
 
+    const dispatch = useDispatch();
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setCredentials({
             ...credentials,
@@ -61,7 +65,9 @@ const Register = () => {
         });
     };
 
-    const handleRegister = () => {};
+    const handleRegister = () => {
+        dispatch(registerUser(credentials));
+    };
 
     useEffect(() => {
         setIsFormValid(validateRegisterForm(credentials));

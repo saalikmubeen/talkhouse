@@ -9,6 +9,10 @@ export type RegisterArgs = {
     username: string;
 };
 
+export type inviteFriendArgs = {
+    email: string;
+}
+
 
 export type AuthResponse = {
     userDetails: {
