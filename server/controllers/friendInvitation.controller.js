@@ -1,10 +1,11 @@
 const FriendInvitation = require("../models/FriendInvitation");
 const User = require("../models/User");
-const { updateUsersInvitations } = require("../socketControllers/notifyConnectedSockets");
+const {
+    updateUsersInvitations,
+} = require("../socketControllers/notifyConnectedSockets");
 
 const inviteFriend = async (req, res) => {
-
-    const {email: senderEmailAddress, userId} = req.user
+    const { email: senderEmailAddress, userId } = req.user;
     const { email: receiverEmailAddress } = req.body;
 
     // check if user is inviting himself
@@ -13,47 +14,89 @@ const inviteFriend = async (req, res) => {
     }
 
     // check if the invited user exists in the database
-    const targetUser = await User.findOne({email: receiverEmailAddress});
+    const targetUser = await User.findOne({ email: receiverEmailAddress });
 
     if (!targetUser) {
-        return res.status(404).send("Sorry, the user you are trying to invite doesn't exist. Please check the email address");
+        return res
+            .status(404)
+            .send(
+                "Sorry, the user you are trying to invite doesn't exist. Please check the email address"
+            );
     }
 
     // check if invitation has already been sent
     const invitationAlreadyExists = await FriendInvitation.findOne({
         senderId: userId,
-        receiverId: targetUser._id
-    })
+        receiverId: targetUser._id,
+    });
 
     if (invitationAlreadyExists) {
-        return res.status(409).send("You have already sent an invitation to this user");
+        return res
+            .status(409)
+            .send("You have already sent an invitation to this user");
     }
 
     // check if the invited user is already a friend of the sender
-    const isAlreadyFriend = targetUser.friends.some(friend => friend.toString() === userId.toString());
-    
+    const isAlreadyFriend = targetUser.friends.some(
+        (friend) => friend.toString() === userId.toString()
+    );
+
     if (isAlreadyFriend) {
-        return res.status(409).send("You are already friends with this user. Please check your friend first");
+        return res
+            .status(409)
+            .send(
+                "You are already friends with this user. Please check your friend first"
+            );
     }
 
     // create invitation
 
     await FriendInvitation.create({
         senderId: userId,
-        receiverId: targetUser._id
+        receiverId: targetUser._id,
     });
 
     // after successfully creating the invitation, update the target user's pending invitation list
     // with the new invitation in real time using sockets if the target user is online
-    // TODO: implement real time sockets
-
     updateUsersInvitations(targetUser._id.toString(), "new");
-    
+
     return res.status(201).send("Invitation has been sent successfully");
+};
 
-}
+const acceptInvitation = async (req, res) => {};
 
+const rejectInvitation = async (req, res) => {
+    try {
+        const { invitationId } = req.body;
+
+        // check if invitation exists
+
+        const invitation = await FriendInvitation.exists({ _id: invitationId });
+
+        if (!invitation) {
+            return res
+                .status(404)
+                .send(
+                    "Sorry, the invitation you are trying to reject doesn't exist"
+                );
+        }
+
+        // reject the invitation
+        await FriendInvitation.findByIdAndDelete(invitationId);
+
+        // update the user's pending invitations list
+        updateUsersInvitations(req.user.userId);
+
+        return res.status(200).send("Invitation rejected successfully!");
+    } catch (err) {
+        res.status(500).send(
+            "Sorry, something went wrong. Please try again later"
+        );
+    }
+};
 
 module.exports = {
-    inviteFriend
-}
+    inviteFriend,
+    acceptInvitation,
+    rejectInvitation,
+};

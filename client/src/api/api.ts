@@ -94,3 +94,22 @@ export const inviteFriendRequest = async ({ email }: inviteFriendArgs) => {
         };
     }
 };
+
+
+
+
+export const rejectFriendRequest = async (invitationId: string) => {
+    try {
+        const res = await api.post("/api/invite-friend/reject", {
+            invitationId,
+        });
+
+        return res.data;
+    } catch (err: any) {
+        checkForAuthorization(err);
+        return {
+            error: true,
+            message: err.response.data,
+        };
+    }
+};

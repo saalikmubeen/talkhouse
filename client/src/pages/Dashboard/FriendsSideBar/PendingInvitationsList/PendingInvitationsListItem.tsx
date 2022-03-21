@@ -48,13 +48,13 @@ const PendingInvitationsListItem = ({
                      >
                          {username}
                      </Typography>
-                     <InvitationDecisionButtons />
+                     <InvitationDecisionButtons invitationId={id}/>
                  </Box>
              </div>
          </Tooltip>
      );
    } else {
-       return <PendingInvitationListItemSmall username={username} />;
+       return <PendingInvitationListItemSmall username={username} invitationId={id}/>;
    }
 };
 

@@ -8,10 +8,11 @@ import IconButton from "@mui/material/IconButton";
 import InvitationDecisionButtons from "./InvitationDecisionButtons";
 
 interface ComponentProps {
-    username: string
+    username: string,
+    invitationId: string,
 }
 
-export default function PendingInvitationListItemSmall({username}: ComponentProps) {
+export default function PendingInvitationListItemSmall({username, invitationId}: ComponentProps) {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
 
@@ -55,7 +56,7 @@ export default function PendingInvitationListItemSmall({username}: ComponentProp
                 }}
             >
                 <MenuItem>
-                    <InvitationDecisionButtons color="#8e9297" />
+                    <InvitationDecisionButtons color="#8e9297" invitationId={invitationId}/>
                 </MenuItem>
             </Menu>
         </div>

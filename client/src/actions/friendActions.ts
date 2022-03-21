@@ -1,5 +1,5 @@
 import { Dispatch } from "redux";
-import { inviteFriendRequest } from "../api/api";
+import { inviteFriendRequest, rejectFriendRequest } from "../api/api";
 import { showAlert } from "./alertActions";
 import { actionTypes, PendingInvitation } from "./types";
 
@@ -24,3 +24,17 @@ export const setPendingInvitations = (pendingInvitations: PendingInvitation[]) =
         payload: pendingInvitations,
     };
 }
+
+
+
+export const rejectInvitation = (invitationId: string) => {
+    return async (dispatch: Dispatch) => {
+        const response = await rejectFriendRequest(invitationId);
+
+        if (response === "Invitation rejected successfully!") {;
+            dispatch(showAlert(response));
+        } else {
+            dispatch(showAlert(response.message));
+        }
+    };
+};
