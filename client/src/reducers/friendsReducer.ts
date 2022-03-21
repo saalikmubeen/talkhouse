@@ -1,33 +1,47 @@
+import { Reducer } from "redux";
+import { FriendsActions, actionTypes } from "../actions/types";
+
 interface PendingInvitation {
-    _id: string,
+    _id: string;
     senderId: {
-        username: string,
-        email: string,
-    }
+        username: string;
+        email: string;
+        _id: string;
+    };
 }
 
 interface Friend {
-    id: string,
-    username: string,
-    isOnline: boolean,
+    id: string;
+    username: string;
+    isOnline: boolean;
 }
 
 const initialState = {
     friends: [],
     pendingInvitations: [],
-    onlineUsers: []
+    onlineUsers: [],
 };
 
-
-
 interface FriendsState {
-    friends: Array<Friend>,
-    pendingInvitations: Array<PendingInvitation>,
-    onlineUsers: Array<Friend>,
+    friends: Array<Friend>;
+    pendingInvitations: Array<PendingInvitation>;
+    onlineUsers: Array<Friend>;
 }
 
-const friendsReducer = (state = initialState, action: any): FriendsState  => {
-    return state;
+const friendsReducer: Reducer<FriendsState, FriendsActions> = (
+    state = initialState,
+    action
+) => {
+    switch (action.type) {
+        case actionTypes.setPendingInvitations:
+            return {
+                ...state,
+                pendingInvitations: action.payload,
+            };
+
+        default:
+            return state;
+    }
 };
 
 export { friendsReducer };

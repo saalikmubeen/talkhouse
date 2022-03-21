@@ -1,6 +1,7 @@
 import React from "react";
 import { styled } from "@mui/system";
 import PendingInvitationsListItem from "./PendingInvitationsListItem";
+import { useAppSelector } from "../../../../store";
 
 const DUMMY_INVITATIONS = [
   {
@@ -29,9 +30,11 @@ const MainContainer = styled("div")({
 });
 
 const PendingInvitationsList = () => {
+  const { pendingInvitations } = useAppSelector((state) => state.friends);
+
   return (
     <MainContainer>
-      {DUMMY_INVITATIONS.map((invitation) => (
+      {pendingInvitations.map((invitation) => (
         <PendingInvitationsListItem
           key={invitation._id}
           id={invitation._id}

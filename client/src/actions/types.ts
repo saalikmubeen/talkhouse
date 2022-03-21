@@ -37,5 +37,21 @@ interface HideAlertAction {
     type: actionTypes.hideAlert
 }
 
+
+export interface PendingInvitation {
+    _id: string;
+    senderId: {
+        username: string;
+        email: string;
+        _id: string
+    };
+}
+
+interface SetPendingInvitationAction  {
+    type: actionTypes.setPendingInvitations,
+    payload: Array<PendingInvitation>
+}
+
 export type AuthActions = AuthSuccessAction | AuthErrorAction | LogoutAction; 
 export type AlertActions = ShowAlertAction | HideAlertAction;
+export type FriendsActions = SetPendingInvitationAction;

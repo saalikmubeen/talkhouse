@@ -47,7 +47,7 @@ const inviteFriend = async (req, res) => {
     // with the new invitation in real time using sockets if the target user is online
     // TODO: implement real time sockets
 
-    updateUsersInvitations(targetUser._id);
+    updateUsersInvitations(targetUser._id.toString(), "new");
     
     return res.status(201).send("Invitation has been sent successfully");
 

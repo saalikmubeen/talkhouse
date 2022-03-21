@@ -3,7 +3,11 @@ const { getActiveConnections } = require("../socket/connectedUsers");
 const  { getServerSocketInstance } = require("../socket/connectedUsers");
 
 
-const updateUsersInvitations = async (userId) => {
+const updateUsersInvitations = async (userId, isNew) => {
+
+    if ( isNew === "new" ) {
+        console.log("new invitation");
+    }
 
     // get the user's pending invitations
     const invitations = await FriendInvitation.find({
