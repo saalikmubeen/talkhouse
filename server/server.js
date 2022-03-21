@@ -8,7 +8,7 @@ const mongoose = require("mongoose");
 const authRoutes = require("./routes/authRoutes");
 const friendInvitationRoutes = require("./routes/friendInvitationRoutes");
 
-const socketServer = require("./socket/socketServer");
+const { createSocketServer } = require("./socket/socketServer");
 
 const PORT = process.env.PORT || 5000;
 
@@ -23,7 +23,7 @@ app.use("/api/invite-friend", friendInvitationRoutes);
 const server = http.createServer(app);
 
 // socket connection
-socketServer(server);
+createSocketServer(server);
 
 mongoose
     .connect(process.env.MONGO_URI)

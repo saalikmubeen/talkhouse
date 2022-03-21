@@ -1,5 +1,6 @@
 const FriendInvitation = require("../models/FriendInvitation");
 const User = require("../models/User");
+const { updateUsersInvitations } = require("../socketControllers/notifyConnectedSockets");
 
 const inviteFriend = async (req, res) => {
 
@@ -45,6 +46,8 @@ const inviteFriend = async (req, res) => {
     // after successfully creating the invitation, update the target user's pending invitation list
     // with the new invitation in real time using sockets if the target user is online
     // TODO: implement real time sockets
+
+    updateUsersInvitations(targetUser._id);
     
     return res.status(201).send("Invitation has been sent successfully");
 

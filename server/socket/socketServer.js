@@ -2,6 +2,8 @@ const socket = require("socket.io");
 const requireSocketAuth = require("../middlewares/requireSocketAuth");
 const disconnectHandler = require("../socketControllers/disconnectHandler");
 const newConnectionHandler = require("../socketControllers/newConnectionHandler");
+const { setServerSocketInstance } = require("./connectedUsers");
+
 
 const createSocketServer = (server) => {
     const io = socket(server, {
@@ -11,6 +13,7 @@ const createSocketServer = (server) => {
         },
     });
 
+    setServerSocketInstance(io);
 
     // check authentication of user
     io.use((socket, next) => {
@@ -31,4 +34,6 @@ const createSocketServer = (server) => {
     });
 };
 
-module.exports = createSocketServer;
+module.exports = {
+    createSocketServer,
+}
