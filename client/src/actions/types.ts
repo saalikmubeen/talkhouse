@@ -47,11 +47,25 @@ export interface PendingInvitation {
     };
 }
 
+
+export interface Friend {
+    id: string;
+    username: string;
+    email: string;
+    isOnline?: boolean;
+}
+
 interface SetPendingInvitationAction  {
     type: actionTypes.setPendingInvitations,
     payload: Array<PendingInvitation>
 }
 
+
+interface SetFriends {
+    type: actionTypes.setFriends;
+    payload: Array<Friend>;
+}
+
 export type AuthActions = AuthSuccessAction | AuthErrorAction | LogoutAction; 
 export type AlertActions = ShowAlertAction | HideAlertAction;
-export type FriendsActions = SetPendingInvitationAction;
+export type FriendsActions = SetPendingInvitationAction | SetFriends;

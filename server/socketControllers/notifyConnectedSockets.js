@@ -36,8 +36,9 @@ const updateUsersFriendsList = async (userId) => {
     const user = await User.findById(userId).populate("friends", { username: 1, email: 1, _id: 1 });
     const friends = user.friends.map((friend) => {
         return {
-            ...friend,
-            id: friend._id
+            id: friend._id,
+            username: friend.username,
+            email: friend.email
         }
     })
 

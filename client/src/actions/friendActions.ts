@@ -1,7 +1,7 @@
 import { Dispatch } from "redux";
-import { inviteFriendRequest, rejectFriendRequest } from "../api/api";
+import { acceptFriendRequest, inviteFriendRequest, rejectFriendRequest } from "../api/api";
 import { showAlert } from "./alertActions";
-import { actionTypes, PendingInvitation } from "./types";
+import { actionTypes, PendingInvitation, Friend } from "./types";
 
 
 export const inviteFriend = (email: string, closeDialogHandler: () => void) => {
@@ -27,11 +27,35 @@ export const setPendingInvitations = (pendingInvitations: PendingInvitation[]) =
 
 
 
+export const setFriends = (
+    friends: Friend[]
+) => {
+    return {
+        type: actionTypes.setFriends,
+        payload: friends,
+    };
+};
+
+
+
 export const rejectInvitation = (invitationId: string) => {
     return async (dispatch: Dispatch) => {
         const response = await rejectFriendRequest(invitationId);
 
         if (response === "Invitation rejected successfully!") {;
+            dispatch(showAlert(response));
+        } else {
+            dispatch(showAlert(response.message));
+        }
+    };
+};
+
+
+export const acceptInvitation = (invitationId: string) => {
+    return async (dispatch: Dispatch) => {
+        const response = await acceptFriendRequest(invitationId);
+
+        if (response === "Invitation accepted successfully!") {
             dispatch(showAlert(response));
         } else {
             dispatch(showAlert(response.message));

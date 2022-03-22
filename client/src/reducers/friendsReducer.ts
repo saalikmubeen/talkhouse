@@ -13,7 +13,8 @@ interface PendingInvitation {
 interface Friend {
     id: string;
     username: string;
-    isOnline: boolean;
+    email: string;
+    isOnline?: boolean;
 }
 
 const initialState = {
@@ -38,6 +39,12 @@ const friendsReducer: Reducer<FriendsState, FriendsActions> = (
                 ...state,
                 pendingInvitations: action.payload,
             };
+
+        case actionTypes.setFriends:
+            return {
+                ...state,
+                friends: action.payload
+            }
 
         default:
             return state;

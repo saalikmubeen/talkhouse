@@ -1,5 +1,5 @@
 import { io, Socket } from "socket.io-client";
-import { setPendingInvitations } from "../actions/friendActions";
+import { setFriends, setPendingInvitations } from "../actions/friendActions";
 import { store } from "../store";
 
 export interface UserDetails {
@@ -17,8 +17,16 @@ interface PendingInvitation {
     };
 }
 
+interface Friend {
+    id: string;
+    username: string;
+    email: string;
+    isOnline?: boolean;
+}
+
 interface ServerToClientEvents {
-    "friend-invitations": (data: Array<PendingInvitation>) => void
+    "friend-invitations": (data: Array<PendingInvitation>) => void;
+    "friends-list": (data: Array<Friend>) => void;
 }
 
 interface ClientToServerEvents {
@@ -47,6 +55,11 @@ const connectWithSocketServer = (userDetails: UserDetails) => {
     socket.on("friend-invitations", (data) => {
         store.dispatch(setPendingInvitations(data) as any);
     })
+
+
+    socket.on("friends-list", (data) => {
+        store.dispatch(setFriends(data) as any);
+    });
 };
 
 export { connectWithSocketServer };

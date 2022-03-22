@@ -5,11 +5,13 @@ import MenuItem from "@mui/material/MenuItem";
 import { IconButton } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { logoutUser } from "../../../actions/authActions";
+import { useAppSelector } from "../../../store";
 
 export default function BasicMenu() {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const dispatch = useDispatch();
+    const userDetails = useAppSelector(state => state.auth.userDetails)
 
     const handleMenuClose = () => {
         setAnchorEl(null);
@@ -38,6 +40,7 @@ export default function BasicMenu() {
                 }}
             >
                 <MenuItem onClick={handleClick}>Logout</MenuItem>
+                <MenuItem> {"token" in userDetails && userDetails.username }</MenuItem>
             </Menu>
         </div>
     );
