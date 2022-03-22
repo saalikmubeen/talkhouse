@@ -52,7 +52,11 @@ export interface Friend {
     id: string;
     username: string;
     email: string;
-    isOnline?: boolean;
+}
+
+export interface OnlineUser {
+    userId: string;
+    socketId: string;
 }
 
 interface SetPendingInvitationAction  {
@@ -66,6 +70,12 @@ interface SetFriends {
     payload: Array<Friend>;
 }
 
+
+interface SetOnlineUsers {
+    type: actionTypes.setOnlineUsers;
+    payload: Array<OnlineUser>;
+}
+
 export type AuthActions = AuthSuccessAction | AuthErrorAction | LogoutAction; 
 export type AlertActions = ShowAlertAction | HideAlertAction;
-export type FriendsActions = SetPendingInvitationAction | SetFriends;
+export type FriendsActions = SetPendingInvitationAction | SetFriends | SetOnlineUsers;

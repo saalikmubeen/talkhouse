@@ -12,10 +12,10 @@ interface FriendsListItemProps {
     id: string;
     username: string;
     email: string;
-    isOnline?: boolean;
+    isOnline: boolean;
 }
 
-const FriendsListItem = ({ id, username, isOnline, email }: FriendsListItemProps) => {
+const FriendsListItem = ({ username, isOnline, email }: FriendsListItemProps) => {
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("sm"));
 

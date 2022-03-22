@@ -1,7 +1,7 @@
 import { Dispatch } from "redux";
 import { acceptFriendRequest, inviteFriendRequest, rejectFriendRequest } from "../api/api";
 import { showAlert } from "./alertActions";
-import { actionTypes, PendingInvitation, Friend } from "./types";
+import { actionTypes, PendingInvitation, Friend, OnlineUser } from "./types";
 
 
 export const inviteFriend = (email: string, closeDialogHandler: () => void) => {
@@ -36,6 +36,15 @@ export const setFriends = (
     };
 };
 
+
+export const setOnlineUsers = (
+    onlineUsers: OnlineUser[]
+) => {
+    return {
+        type: actionTypes.setOnlineUsers,
+        payload: onlineUsers,
+    };
+};
 
 
 export const rejectInvitation = (invitationId: string) => {

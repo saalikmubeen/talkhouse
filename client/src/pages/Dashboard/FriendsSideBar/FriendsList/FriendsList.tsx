@@ -27,11 +27,17 @@ const MainContainer = styled("div")({
 });
 
 const FriendsList = () => {
-  const { friends } = useAppSelector(state => state.friends);
+  const { friends, onlineUsers } = useAppSelector(state => state.friends);
+
+  const modifiedFriends = friends.map(friend => {
+    const isOnline = onlineUsers.find(user => user.userId === friend.id);
+
+    return {...friend, isOnline: !!isOnline};
+  })
 
   return (
     <MainContainer>
-      {friends.map((f) => (
+      {modifiedFriends.map((f) => (
         <FriendsListItem
           username={f.username}
           id={f.id}

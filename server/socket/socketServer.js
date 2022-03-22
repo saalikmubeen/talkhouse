@@ -2,7 +2,7 @@ const socket = require("socket.io");
 const requireSocketAuth = require("../middlewares/requireSocketAuth");
 const disconnectHandler = require("../socketControllers/disconnectHandler");
 const newConnectionHandler = require("../socketControllers/newConnectionHandler");
-const { setServerSocketInstance } = require("./connectedUsers");
+const { setServerSocketInstance, getOnlineUsers } = require("./connectedUsers");
 
 
 const createSocketServer = (server) => {
@@ -18,20 +18,23 @@ const createSocketServer = (server) => {
     // check authentication of user
     io.use((socket, next) => {
         requireSocketAuth(socket, next);
-    })
+    });
 
     io.on("connection", (socket) => {
         // console.log(socket.user)
         console.log(`New socket connection connected: ${socket.id}`);
-        newConnectionHandler(socket, io)
+        newConnectionHandler(socket, io);
 
-        
         socket.on("disconnect", () => {
             console.log(`Connected socket disconnected: ${socket.id}`);
             disconnectHandler(socket, io);
-        })
-
+        });
     });
+
+    // emit online users to all connected users every 10 seconds
+    // setInterval(() => {
+    //     io.emit("online-users", getOnlineUsers());
+    // }, 10 * 1000)
 };
 
 module.exports = {
