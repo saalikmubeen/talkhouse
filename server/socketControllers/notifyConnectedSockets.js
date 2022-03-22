@@ -1,4 +1,5 @@
 const FriendInvitation = require("../models/FriendInvitation"); 
+const User = require("../models/User");
 const { getActiveConnections } = require("../socket/connectedUsers");
 const  { getServerSocketInstance } = require("../socket/connectedUsers");
 
@@ -29,6 +30,31 @@ const updateUsersInvitations = async (userId, isNew) => {
 }
 
 
+const updateUsersFriendsList = async (userId) => {
+
+    // get the user's friends list
+    const user = await User.findById(userId).populate("friends", { username: 1, email: 1, _id: 1 });
+    const friends = user.friends.map((friend) => {
+        return {
+            ...friend,
+            id: friend._id
+        }
+    })
+
+    // get the users's active socket connections(socket ids)
+    const activeConnections = getActiveConnections(userId);
+
+    // send user's friends to all the active connections of this user(userId)
+
+    const io = getServerSocketInstance();
+
+    activeConnections.forEach((socketId) => {
+        io.to(socketId).emit("friends-list", friends || []);
+    });
+};
+
+
 module.exports = {
-    updateUsersInvitations
+    updateUsersInvitations,
+    updateUsersFriendsList
 }

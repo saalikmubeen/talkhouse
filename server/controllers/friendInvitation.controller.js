@@ -2,6 +2,7 @@ const FriendInvitation = require("../models/FriendInvitation");
 const User = require("../models/User");
 const {
     updateUsersInvitations,
+    updateUsersFriendsList
 } = require("../socketControllers/notifyConnectedSockets");
 
 const inviteFriend = async (req, res) => {
@@ -63,14 +64,60 @@ const inviteFriend = async (req, res) => {
     return res.status(201).send("Invitation has been sent successfully");
 };
 
-const acceptInvitation = async (req, res) => {};
+const acceptInvitation = async (req, res) => {
+
+    try {
+
+        const { invitationId } = req.body;
+
+        // check if invitation exists
+        const invitation = await FriendInvitation.exists({ _id: invitationId });
+
+        if (!invitation) {
+            return res
+                .status(404)
+                .send(
+                    "Sorry, the invitation you are trying to accept doesn't exist"
+                );
+        }
+
+        // accept the invitation
+
+        const deletedInvitation = await FriendInvitation.findByIdAndDelete(
+            invitationId
+        );
+
+        // update friends list of both users in the database
+        const sender = await User.findById(deletedInvitation.senderId);
+        const receiver = await User.findById(req.user.userId);
+
+        sender.friends.push(receiver._id);
+        receiver.friends.push(sender._id);
+
+        await sender.save();
+        await receiver.save();
+
+        // update the user's(user accepting the invitation) pending invitations list
+        updateUsersInvitations(req.user.userId.toString());
+
+        // update the user's(user accepting the invitation, receiver) friends list
+        updateUsersFriendsList(req.user.userId.toString());
+
+        // update the user's(user who has sent the invitation, sender) friends list
+        updateUsersFriendsList(deletedInvitation.senderId.toString());
+
+
+        return res.status(200).send("Invitation accepted successfully!");
+    }catch(err) {
+        return res.status(500).send("Sorry, something went wrong. Please try again later");
+    }
+};
 
 const rejectInvitation = async (req, res) => {
     try {
         const { invitationId } = req.body;
 
         // check if invitation exists
-
         const invitation = await FriendInvitation.exists({ _id: invitationId });
 
         if (!invitation) {
