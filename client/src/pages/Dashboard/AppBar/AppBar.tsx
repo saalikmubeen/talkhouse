@@ -1,6 +1,7 @@
 import React from "react";
 import { styled } from "@mui/system";
 import DropdownMenu from "./DropdownMenu";
+import ChosenChatLabel from "./ChosenChatLabel";
 
 const MainContainer = styled("div")({
   position: "absolute",
@@ -19,7 +20,8 @@ const MainContainer = styled("div")({
 const AppBar = () => {
   return (
       <MainContainer sx={{ width: { xs: "100%", sm: "calc(100% - 326px)", } }}>
-          <DropdownMenu />
+        <ChosenChatLabel/>
+        <DropdownMenu />
       </MainContainer>
   );
 };

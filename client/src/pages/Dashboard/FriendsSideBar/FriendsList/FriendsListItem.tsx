@@ -1,4 +1,5 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import Button from "@mui/material/Button";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
@@ -6,6 +7,7 @@ import {Tooltip} from "@mui/material"
 import Typography from "@mui/material/Typography";
 import OnlineIndicator from "./OnlineIndicator";
 import Avatar from "../../../../components/Avatar";
+import { setChosenChatDetails } from "../../../../actions/chatActions";
 
 
 interface FriendsListItemProps {
@@ -15,13 +17,18 @@ interface FriendsListItemProps {
     isOnline: boolean;
 }
 
-const FriendsListItem = ({ username, isOnline, email }: FriendsListItemProps) => {
+const FriendsListItem = ({ id, username, isOnline, email }: FriendsListItemProps) => {
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("sm"));
+
+  const dispatch = useDispatch();
 
   return (
       <Tooltip title={email}>
           <Button
+          onClick={() => {
+              dispatch(setChosenChatDetails({userId: id, username}));
+          }}
               style={{
                   width: "100%",
                   height: "42px",

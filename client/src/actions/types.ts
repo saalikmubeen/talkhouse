@@ -2,11 +2,18 @@ export enum actionTypes {
     authenticate,
     logout,
     authError,
+
     showAlert,
     hideAlert,
+
     setFriends,
     setPendingInvitations,
     setOnlineUsers,
+
+    setChatType,
+    setChosenChatDetails,
+    setMessages,
+
 }
 
 
@@ -76,6 +83,16 @@ interface SetOnlineUsers {
     payload: Array<OnlineUser>;
 }
 
+
+export interface SetChosenChatDetails {
+    type: actionTypes.setChosenChatDetails,
+    payload: {
+        userId: string,
+        username: string
+    }
+}
+
 export type AuthActions = AuthSuccessAction | AuthErrorAction | LogoutAction; 
 export type AlertActions = ShowAlertAction | HideAlertAction;
 export type FriendsActions = SetPendingInvitationAction | SetFriends | SetOnlineUsers;
+export type ChatActions = SetChosenChatDetails;
