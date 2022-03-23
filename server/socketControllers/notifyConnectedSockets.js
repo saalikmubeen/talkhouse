@@ -1,3 +1,5 @@
+const mongoose = require("mongoose");
+const Conversation = require("../models/Conversation");
 const FriendInvitation = require("../models/FriendInvitation"); 
 const User = require("../models/User");
 const { getActiveConnections } = require("../socket/connectedUsers");
@@ -10,9 +12,10 @@ const updateUsersInvitations = async (userId, isNew) => {
         console.log("new invitation");
     }
 
+
     // get the user's pending invitations
     const invitations = await FriendInvitation.find({
-        receiverId: userId
+        receiverId: userId,
     }).populate("senderId", { username: 1, email: 1, _id: 1 });
 
 
@@ -34,13 +37,18 @@ const updateUsersFriendsList = async (userId) => {
 
     // get the user's friends list
     const user = await User.findById(userId).populate("friends", { username: 1, email: 1, _id: 1 });
-    const friends = user.friends.map((friend) => {
+
+    if (!user) {
+        return;
+    }
+
+    const friends = user.friends ? user.friends.map((friend) => {
         return {
             id: friend._id,
             username: friend.username,
             email: friend.email
         }
-    })
+    }): []
 
     // get the users's active socket connections(socket ids)
     const activeConnections = getActiveConnections(userId);
@@ -55,7 +63,53 @@ const updateUsersFriendsList = async (userId) => {
 };
 
 
+
+const updateChatHistory = async (conversationId, toSpecificSocketId=null) => {
+
+    const conversation = await Conversation.findById(conversationId).populate({
+        path: "messages",
+        model: "Message",
+        populate: {
+            path: "author",
+            select: "username _id",
+            model: "User"
+        }
+    });
+
+    if (!conversation) {
+        return;
+    }
+
+    const io = getServerSocketInstance();
+
+    if (toSpecificSocketId) {
+
+        // initial chat history update
+        return io.to(toSpecificSocketId).emit("direct-chat-history", {
+            messages: conversation.messages,
+            participants: conversation.participants
+        });
+    }
+    
+
+    // get the participant's active socket connections(socket ids)
+    conversation.participants.forEach((participantId) => {
+        
+        const activeConnections = getActiveConnections(participantId.toString());
+
+        // send the updated chat history to all the active connections of this user(participantId)
+        activeConnections.forEach((socketId) => {
+            io.to(socketId).emit("direct-chat-history", {
+                messages: conversation.messages,
+                participants: conversation.participants
+            });
+        });
+    })
+}
+
+
 module.exports = {
     updateUsersInvitations,
-    updateUsersFriendsList
+    updateUsersFriendsList,
+    updateChatHistory
 }

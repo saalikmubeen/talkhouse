@@ -1,5 +1,6 @@
 const socket = require("socket.io");
 const requireSocketAuth = require("../middlewares/requireSocketAuth");
+const directChatHistoryHandler = require("../socketControllers/directChatHistoryHandler");
 const directMessageHandler = require("../socketControllers/directMessageHandler");
 const disconnectHandler = require("../socketControllers/disconnectHandler");
 const newConnectionHandler = require("../socketControllers/newConnectionHandler");
@@ -30,6 +31,10 @@ const createSocketServer = (server) => {
         socket.on("direct-message", (data) => {
             directMessageHandler(socket, data);
         })
+
+        socket.on("direct-chat-history", (data) => {
+            directChatHistoryHandler(data.conversationId);
+        });
 
         socket.on("disconnect", () => {
             console.log(`Connected socket disconnected: ${socket.id}`);

@@ -1,8 +1,10 @@
-import React  from "react";
+import React, { useEffect }  from "react";
 import { styled } from "@mui/system";
 import MessagesHeader from "./Header";
 import DUMMY_MESSAGES from "./DUMMY_MESSAGES";
 import Message from "./Message";
+import { useAppSelector } from "../../../../store";
+import { fetchDirectChatHistory } from "../../../../socket/socketConnection";
 
 
 const MainContainer = styled("div")({
@@ -15,6 +17,18 @@ const MainContainer = styled("div")({
 
 
 const Messages = () => {
+
+    const chatDetails = useAppSelector((state) => state.chat.chosenChatDetails);
+    
+    useEffect(() => {
+        
+        if (chatDetails) {
+            fetchDirectChatHistory({conversationId: chatDetails.userId});
+        }
+
+    }, [chatDetails]);
+
+
     return (
         <MainContainer>
             <MessagesHeader />

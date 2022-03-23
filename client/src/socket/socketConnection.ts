@@ -32,11 +32,21 @@ interface ServerToClientEvents {
     "friend-invitations": (data: Array<PendingInvitation>) => void;
     "friends-list": (data: Array<Friend>) => void;
     "online-users": (data: Array<OnlineUser>) => void;
+
+    "direct-chat-history": (data: any) => void;
 }
 
 interface ClientToServerEvents {
     helloFomClient: () => void;
-    "direct-message": (data: any) => void
+
+    "direct-message": (data: {
+        message: string;
+        receiverUserId: string;
+    }) => void;
+
+    "direct-chat-history": (data: {
+    conversationId: string
+}) => void;
 }
 
 let socket: Socket<ServerToClientEvents, ClientToServerEvents>;
@@ -72,6 +82,11 @@ const connectWithSocketServer = (userDetails: UserDetails) => {
     socket.on("online-users", (data) => {
         store.dispatch(setOnlineUsers(data) as any);
     });
+
+
+    socket.on("direct-chat-history", (data) => {
+        console.log(data);
+    })
 };
 
 
@@ -79,4 +94,11 @@ const sendDirectMessage = (data: {message: string, receiverUserId: string}) => {
     socket.emit("direct-message", data)
 }
 
-export { connectWithSocketServer, sendDirectMessage };
+
+const fetchDirectChatHistory = (data: {
+    conversationId: string;
+}) => {
+    socket.emit("direct-chat-history", data);
+};
+
+export { connectWithSocketServer, sendDirectMessage, fetchDirectChatHistory };
