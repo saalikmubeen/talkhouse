@@ -10,25 +10,16 @@ const MainContainer = styled("div")({
 });
 
 const AvatarContainer = styled("div")({
-    width: "70px",
+    width: "60px",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
 });
 
 const MessageContainer = styled("div")({
     display: "flex",
     flexDirection: "column",
-});
-
-const MessageContent = styled("div")({
-    color: "#DCDDDE",
-});
-
-const SameAuthorMessageContent = styled("div")({
-    color: "#DCDDDE",
-    width: "97%",
-});
-
-const SameAuthorMessageText = styled("span")({
-    marginLeft: "70px",
+    maxWidth: "50%",
 });
 
 
@@ -37,30 +28,71 @@ interface MessageProps {
     sameAuthor: boolean;
     username: string;
     date: string;
+    incomingMessage: boolean;
 }
 
-const Message = ({ content, sameAuthor, username, date }: MessageProps) => {
-    if (sameAuthor) {
+const Message = ({ content, sameAuthor, username, date, incomingMessage }: MessageProps) => {
+
+    if (!incomingMessage) {
         return (
-            <SameAuthorMessageContent>
-                <SameAuthorMessageText>{content}</SameAuthorMessageText>
-            </SameAuthorMessageContent>
+            <MainContainer>
+                <MessageContainer sx={{ marginLeft: "auto" }}>
+                    <div>
+
+                        <Typography sx={{ color: "#b9bbbe", textAlign: "right", marginBottom: "3px"}}>
+                            {new Date(date).toLocaleTimeString()}
+                        </Typography>
+
+                        <Typography
+                            sx={{
+                                fontSize: "16px",
+                                color: "white",
+                                backgroundColor: "#5865f2",
+                                borderRadius: "13px",
+                                padding: "7px 10px",
+                            }}
+                        >
+                            {content}
+                        </Typography>
+                    </div>
+                </MessageContainer>
+            </MainContainer>
         );
     }
 
+
     return (
         <MainContainer>
-            <AvatarContainer>
-                <Avatar username={username} />
-            </AvatarContainer>
-            <MessageContainer>
-                <Typography style={{ fontSize: "16px", color: "white" }}>
-                    {username}{" "}
-                    <span style={{ fontSize: "12px", color: "#72767d" }}>
-                        {new Date(date).toLocaleTimeString()}
-                    </span>
+            {!sameAuthor && (
+                <AvatarContainer>
+                    <Avatar username={username} />
+                </AvatarContainer>
+            )}
+
+            <MessageContainer
+                sx={{
+                    marginLeft: sameAuthor ? "60px" : "0px",
+                }}
+            >
+                <Typography
+                    sx={{
+                        color: "#b9bbbe",
+                        marginBottom: "4px",
+                    }}
+                >
+                    {new Date(date).toLocaleTimeString()}
                 </Typography>
-                <MessageContent>{content}</MessageContent>
+                <Typography
+                    sx={{
+                        fontSize: "16px",
+                        color: "black",
+                        backgroundColor: "#fafafa",
+                        borderRadius: "13px",
+                        padding: "7px 10px",
+                    }}
+                >
+                    {content}
+                </Typography>
             </MessageContainer>
         </MainContainer>
     );

@@ -47,6 +47,7 @@ const Messages = () => {
                 const today = new Date(Date.now()).toDateString();
                 const messageDate = new Date(message.createdAt).toDateString();
                 const isSameDay = today === messageDate;
+                const incomingMessage = message.author._id === chatDetails?.userId;
 
                 return (
                     <div key={message._id} style={{ width: "97%" }}>
@@ -58,6 +59,7 @@ const Messages = () => {
                             username={message.author.username}
                             sameAuthor={sameAuthor(message, index)}
                             date={message.createdAt}
+                            incomingMessage={incomingMessage}
                         />
                     </div>
                 );
