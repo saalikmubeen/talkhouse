@@ -25,15 +25,13 @@ interface ChatState {
         username: string,
     } | null;
     messages: Array<Message>;
-    participants: Array<string>
 }
 
 
 const initialState = {
     chosenChatDetails: null,
     chatType: ChatTypes.direct,
-    messages: [],
-    participants: []
+    messages: []
 };
 
 

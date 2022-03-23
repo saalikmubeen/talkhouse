@@ -90,7 +90,22 @@ const connectWithSocketServer = (userDetails: UserDetails) => {
 
 
     socket.on("direct-chat-history", (data) => {
-        store.dispatch(setMessages(data.messages) as any);
+        // store.dispatch(setMessages(data.messages) as any);
+
+        const { messages, participants } = data;
+        console.log(participants);
+
+        const receiverId = store.getState().chat.chosenChatDetails?.userId as string;
+        const senderId = (store.getState().auth.userDetails as any)._id;
+
+        // only update the store with messages if the participant is the one we are currently chatting with
+
+        const isActive = participants.includes(receiverId) && participants.includes(senderId);
+
+        if (isActive) {
+            store.dispatch(setMessages(messages) as any);
+        }
+
     })
 };
 

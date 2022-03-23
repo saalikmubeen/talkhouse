@@ -24,7 +24,7 @@ const Messages = () => {
     const sameAuthor = (message: MessageType, index: number) => {
 
         if (index === 0) {
-            return true;
+            return false;
         }
         return message.author._id === messages[index - 1].author._id;
     }
