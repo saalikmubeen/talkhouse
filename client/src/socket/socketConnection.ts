@@ -45,7 +45,7 @@ interface ClientToServerEvents {
     }) => void;
 
     "direct-chat-history": (data: {
-    conversationId: string
+    receiverUserId: string
 }) => void;
 }
 
@@ -96,7 +96,7 @@ const sendDirectMessage = (data: {message: string, receiverUserId: string}) => {
 
 
 const fetchDirectChatHistory = (data: {
-    conversationId: string;
+    receiverUserId: string;
 }) => {
     socket.emit("direct-chat-history", data);
 };

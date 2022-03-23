@@ -21,9 +21,9 @@ const Messages = () => {
     const chatDetails = useAppSelector((state) => state.chat.chosenChatDetails);
     
     useEffect(() => {
-        
+
         if (chatDetails) {
-            fetchDirectChatHistory({conversationId: chatDetails.userId});
+            fetchDirectChatHistory({receiverUserId: chatDetails.userId});
         }
 
     }, [chatDetails]);

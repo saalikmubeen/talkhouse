@@ -33,7 +33,7 @@ const createSocketServer = (server) => {
         })
 
         socket.on("direct-chat-history", (data) => {
-            directChatHistoryHandler(data.conversationId);
+            directChatHistoryHandler(socket, data.receiverUserId);
         });
 
         socket.on("disconnect", () => {
