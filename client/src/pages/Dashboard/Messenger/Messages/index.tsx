@@ -1,4 +1,4 @@
-import React, { useEffect }  from "react";
+import React, { useEffect, useRef }  from "react";
 import { styled } from "@mui/system";
 import MessagesHeader from "./Header";
 import DUMMY_MESSAGES from "./DUMMY_MESSAGES";
@@ -19,6 +19,7 @@ const MainContainer = styled("div")({
 
 
 const Messages = () => {
+    const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const {chosenChatDetails: chatDetails, messages} = useAppSelector((state) => state.chat);
 
@@ -29,6 +30,12 @@ const Messages = () => {
         }
         return message.author._id === messages[index - 1].author._id;
     }
+
+    const scrollToBottom = () => {
+        if (messagesEndRef.current) {
+            messagesEndRef?.current.scrollIntoView({ behavior: "smooth" });
+        }
+    };
     
     useEffect(() => {
 
@@ -36,23 +43,29 @@ const Messages = () => {
             fetchDirectChatHistory({receiverUserId: chatDetails.userId});
         }
 
-    }, [chatDetails?.userId]);
+    }, [chatDetails]);
+
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
 
 
     return (
         <MainContainer>
             <MessagesHeader />
             {messages.map((message, index) => {
-
                 const today = new Date(Date.now()).toDateString();
                 const messageDate = new Date(message.createdAt).toDateString();
                 const isSameDay = today === messageDate;
-                const incomingMessage = message.author._id === chatDetails?.userId;
+                const incomingMessage =
+                    message.author._id === chatDetails?.userId;
 
                 return (
                     <div key={message._id} style={{ width: "97%" }}>
-
-                        {(!isSameDay || index === 0) && (<DateSeparator date={message.createdAt}/> )}
+                        {(!isSameDay || index === 0) && (
+                            <DateSeparator date={message.createdAt} />
+                        )}
 
                         <Message
                             content={message.content}
@@ -64,6 +77,7 @@ const Messages = () => {
                     </div>
                 );
             })}
+            <div ref={messagesEndRef} />
         </MainContainer>
     );
 };
