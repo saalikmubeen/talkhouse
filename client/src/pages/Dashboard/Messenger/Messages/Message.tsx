@@ -57,7 +57,7 @@ const Message = ({ content, sameAuthor, username, date }: MessageProps) => {
                 <Typography style={{ fontSize: "16px", color: "white" }}>
                     {username}{" "}
                     <span style={{ fontSize: "12px", color: "#72767d" }}>
-                        {new Date(date).toLocaleString()}
+                        {new Date(date).toLocaleTimeString()}
                     </span>
                 </Typography>
                 <MessageContent>{content}</MessageContent>

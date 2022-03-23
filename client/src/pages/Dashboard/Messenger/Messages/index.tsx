@@ -6,6 +6,7 @@ import Message from "./Message";
 import { useAppSelector } from "../../../../store";
 import { fetchDirectChatHistory } from "../../../../socket/socketConnection";
 import { Message as MessageType } from "../../../../actions/types";
+import DateSeparator from "./DateSeparator";
 
 
 const MainContainer = styled("div")({
@@ -43,8 +44,14 @@ const Messages = () => {
             <MessagesHeader />
             {messages.map((message, index) => {
 
+                const today = new Date(Date.now()).toDateString();
+                const messageDate = new Date(message.createdAt).toDateString();
+                const isSameDay = today === messageDate;
+
                 return (
                     <div key={message._id} style={{ width: "97%" }}>
+
+                        {(!isSameDay || index === 0) && (<DateSeparator date={message.createdAt}/> )}
 
                         <Message
                             content={message.content}
