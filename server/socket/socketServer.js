@@ -1,5 +1,6 @@
 const socket = require("socket.io");
 const requireSocketAuth = require("../middlewares/requireSocketAuth");
+const directMessageHandler = require("../socketControllers/directMessageHandler");
 const disconnectHandler = require("../socketControllers/disconnectHandler");
 const newConnectionHandler = require("../socketControllers/newConnectionHandler");
 const { setServerSocketInstance, getOnlineUsers } = require("./connectedUsers");
@@ -24,6 +25,11 @@ const createSocketServer = (server) => {
         // console.log(socket.user)
         console.log(`New socket connection connected: ${socket.id}`);
         newConnectionHandler(socket, io);
+
+
+        socket.on("direct-message", (data) => {
+            directMessageHandler(socket, data);
+        })
 
         socket.on("disconnect", () => {
             console.log(`Connected socket disconnected: ${socket.id}`);

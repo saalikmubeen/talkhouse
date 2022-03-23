@@ -36,10 +36,13 @@ interface ServerToClientEvents {
 
 interface ClientToServerEvents {
     helloFomClient: () => void;
+    "direct-message": (data: any) => void
 }
 
+let socket: Socket<ServerToClientEvents, ClientToServerEvents>;
+
 const connectWithSocketServer = (userDetails: UserDetails) => {
-    const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
+    socket = io(
         "http://localhost:5000",
         {
             auth: {
@@ -71,4 +74,9 @@ const connectWithSocketServer = (userDetails: UserDetails) => {
     });
 };
 
-export { connectWithSocketServer };
+
+const sendDirectMessage = (data: {message: string, receiverUserId: string}) => {
+    socket.emit("direct-message", data)
+}
+
+export { connectWithSocketServer, sendDirectMessage };

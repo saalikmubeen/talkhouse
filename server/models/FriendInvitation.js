@@ -1,22 +1,23 @@
 const mongoose = require("mongoose");
 
-const friendInvitationSchema = new mongoose.Schema(
+const messageSchema = new mongoose.Schema(
     {
-        // User sending the invitation
-        senderId: {
+        author: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
             required: true,
         },
 
-        // User who is being invited
-        receiverId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
-            required: true,
+        content: {
+            type: String,
+            required: [true, "can't be blank"],
         },
+
+        type: {
+            type: String,
+        }
     },
     { timestamps: true }
 );
 
-module.exports = mongoose.model("FriendInvitation", friendInvitationSchema);
+module.exports = mongoose.model("Message", messageSchema);
