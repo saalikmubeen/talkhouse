@@ -10,12 +10,11 @@ enum ChatTypes {
 interface Message {
     _id: string;
     content: string;
-    sameAuthor: boolean;
     author: {
         username: string;
+        _id: string;
     }
-    date: string,
-    sameDay: boolean
+    createdAt: string,
 }
 
 
@@ -26,6 +25,7 @@ interface ChatState {
         username: string,
     } | null;
     messages: Array<Message>;
+    participants: Array<string>
 }
 
 
@@ -33,6 +33,7 @@ const initialState = {
     chosenChatDetails: null,
     chatType: ChatTypes.direct,
     messages: [],
+    participants: []
 };
 
 
@@ -47,6 +48,12 @@ const chatReducer: Reducer<ChatState, ChatActions> = (
             return {
                 ...state,
                 chosenChatDetails: action.payload
+            }
+
+        case actionTypes.setMessages:
+            return {
+                ...state,
+                messages: action.payload
             }
 
         default:

@@ -16,6 +16,7 @@ export type inviteFriendArgs = {
 
 export type AuthResponse = {
     userDetails: {
+        _id: string;
         email: string;
         token: string;
         username: string;

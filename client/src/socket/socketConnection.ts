@@ -1,5 +1,7 @@
 import { io, Socket } from "socket.io-client";
 import { setFriends, setOnlineUsers, setPendingInvitations } from "../actions/friendActions";
+import {setMessages} from "../actions/chatActions";
+import { Message } from "../actions/types";
 import { store } from "../store";
 
 export interface UserDetails {
@@ -33,7 +35,10 @@ interface ServerToClientEvents {
     "friends-list": (data: Array<Friend>) => void;
     "online-users": (data: Array<OnlineUser>) => void;
 
-    "direct-chat-history": (data: any) => void;
+    "direct-chat-history": (data: {
+        messages: Array<Message>,
+        participants: Array<string>
+    }) => void;
 }
 
 interface ClientToServerEvents {
@@ -85,7 +90,7 @@ const connectWithSocketServer = (userDetails: UserDetails) => {
 
 
     socket.on("direct-chat-history", (data) => {
-        console.log(data);
+        store.dispatch(setMessages(data.messages) as any);
     })
 };
 

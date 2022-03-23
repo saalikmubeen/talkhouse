@@ -20,6 +20,7 @@ export enum actionTypes {
 interface AuthSuccessAction {
     type: actionTypes.authenticate;
     payload: {
+        _id: string;
         email: string;
         token: string;
         username: string;
@@ -92,7 +93,23 @@ export interface SetChosenChatDetails {
     }
 }
 
+
+export interface Message {
+    _id: string;
+    content: string;
+    author: {
+        username: string;
+        _id: string;
+    };
+    createdAt: string;
+}
+
+export interface SetMessages {
+    type: actionTypes.setMessages;
+    payload: Array<Message>;
+}
+
 export type AuthActions = AuthSuccessAction | AuthErrorAction | LogoutAction; 
 export type AlertActions = ShowAlertAction | HideAlertAction;
 export type FriendsActions = SetPendingInvitationAction | SetFriends | SetOnlineUsers;
-export type ChatActions = SetChosenChatDetails;
+export type ChatActions = SetChosenChatDetails | SetMessages;

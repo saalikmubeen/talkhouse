@@ -8,6 +8,7 @@ const initialState = {
 
 interface AuthState {
     userDetails: {
+        _id: string,
         email: string,
         token: string,
         username: string

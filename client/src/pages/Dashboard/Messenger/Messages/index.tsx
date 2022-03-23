@@ -5,6 +5,7 @@ import DUMMY_MESSAGES from "./DUMMY_MESSAGES";
 import Message from "./Message";
 import { useAppSelector } from "../../../../store";
 import { fetchDirectChatHistory } from "../../../../socket/socketConnection";
+import { Message as MessageType } from "../../../../actions/types";
 
 
 const MainContainer = styled("div")({
@@ -18,7 +19,15 @@ const MainContainer = styled("div")({
 
 const Messages = () => {
 
-    const chatDetails = useAppSelector((state) => state.chat.chosenChatDetails);
+    const {chosenChatDetails: chatDetails, messages} = useAppSelector((state) => state.chat);
+
+    const sameAuthor = (message: MessageType, index: number) => {
+
+        if (index === 0) {
+            return true;
+        }
+        return message.author._id === messages[index - 1].author._id;
+    }
     
     useEffect(() => {
 
@@ -26,13 +35,13 @@ const Messages = () => {
             fetchDirectChatHistory({receiverUserId: chatDetails.userId});
         }
 
-    }, [chatDetails]);
+    }, [chatDetails?.userId]);
 
 
     return (
         <MainContainer>
             <MessagesHeader />
-            {DUMMY_MESSAGES.map((message, index) => {
+            {messages.map((message, index) => {
 
                 return (
                     <div key={message._id} style={{ width: "97%" }}>
@@ -40,8 +49,8 @@ const Messages = () => {
                         <Message
                             content={message.content}
                             username={message.author.username}
-                            sameAuthor={false}
-                            date={message.date}
+                            sameAuthor={sameAuthor(message, index)}
+                            date={message.createdAt}
                         />
                     </div>
                 );
