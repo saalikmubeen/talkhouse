@@ -25,8 +25,13 @@ const server = http.createServer(app);
 // socket connection
 createSocketServer(server);
 
+const MONGO_URI =
+    process.env.NODE_ENV === "production"
+        ? process.env.MONGO_URI
+        : process.env.MONGO_URI_DEV;
+
 mongoose
-    .connect(process.env.MONGO_URI)
+    .connect(MONGO_URI)
     .then(() => {
 
         server.listen(PORT, () => {
