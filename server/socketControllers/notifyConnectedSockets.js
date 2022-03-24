@@ -66,6 +66,7 @@ const updateUsersFriendsList = async (userId) => {
 
 const updateChatHistory = async (conversationId, toSpecificSocketId=null) => {
 
+    // get the conversation's chat history
     const conversation = await Conversation.findById(conversationId).populate({
         path: "messages",
         model: "Message",

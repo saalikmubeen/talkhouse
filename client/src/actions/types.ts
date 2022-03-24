@@ -13,7 +13,8 @@ export enum actionTypes {
     setChatType,
     setChosenChatDetails,
     setMessages,
-
+    
+    setTyping,
 }
 
 
@@ -93,7 +94,6 @@ export interface SetChosenChatDetails {
     }
 }
 
-
 export interface Message {
     _id: string;
     content: string;
@@ -109,7 +109,14 @@ export interface SetMessages {
     payload: Array<Message>;
 }
 
+export interface SetTyping {
+    type: actionTypes.setTyping;
+    payload: {
+        typing: boolean;
+    };
+}
+
 export type AuthActions = AuthSuccessAction | AuthErrorAction | LogoutAction; 
 export type AlertActions = ShowAlertAction | HideAlertAction;
 export type FriendsActions = SetPendingInvitationAction | SetFriends | SetOnlineUsers;
-export type ChatActions = SetChosenChatDetails | SetMessages;
+export type ChatActions = SetChosenChatDetails | SetMessages | SetTyping;

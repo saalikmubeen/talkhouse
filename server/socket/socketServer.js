@@ -4,6 +4,7 @@ const directChatHistoryHandler = require("../socketControllers/directChatHistory
 const directMessageHandler = require("../socketControllers/directMessageHandler");
 const disconnectHandler = require("../socketControllers/disconnectHandler");
 const newConnectionHandler = require("../socketControllers/newConnectionHandler");
+const notifyTypingHandler = require("../socketControllers/notifyTypingHandler");
 const { setServerSocketInstance, getOnlineUsers } = require("./connectedUsers");
 
 
@@ -34,6 +35,11 @@ const createSocketServer = (server) => {
 
         socket.on("direct-chat-history", (data) => {
             directChatHistoryHandler(socket, data.receiverUserId);
+        });
+
+
+        socket.on("notify-typing", (data) => {
+            notifyTypingHandler(socket, io, data);
         });
 
         socket.on("disconnect", () => {

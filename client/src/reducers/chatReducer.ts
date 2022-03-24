@@ -23,6 +23,7 @@ interface ChatState {
     chosenChatDetails: {
         userId: string,
         username: string,
+        typing: boolean,
     } | null;
     messages: Array<Message>;
 }
@@ -45,13 +46,26 @@ const chatReducer: Reducer<ChatState, ChatActions> = (
         case actionTypes.setChosenChatDetails:
             return {
                 ...state,
-                chosenChatDetails: action.payload
-            }
+                chosenChatDetails: {
+                    ...action.payload,
+                    typing: false,
+                },
+            };
 
         case actionTypes.setMessages:
             return {
                 ...state,
                 messages: action.payload
+            }
+
+        case actionTypes.setTyping:
+            return {
+                ...state,
+                chosenChatDetails: {
+                    userId: state.chosenChatDetails?.userId!,
+                    username: state.chosenChatDetails?.username!,
+                    typing: action.payload.typing
+                }
             }
 
         default:

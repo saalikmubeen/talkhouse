@@ -1,6 +1,6 @@
 import { io, Socket } from "socket.io-client";
 import { setFriends, setOnlineUsers, setPendingInvitations } from "../actions/friendActions";
-import {setMessages} from "../actions/chatActions";
+import {setMessages, setTyping} from "../actions/chatActions";
 import { Message } from "../actions/types";
 import { store } from "../store";
 
@@ -39,6 +39,11 @@ interface ServerToClientEvents {
         messages: Array<Message>,
         participants: Array<string>
     }) => void;
+
+    "notify-typing": (data: {
+        senderUserId: string;
+        typing: boolean;
+    }) => void;
 }
 
 interface ClientToServerEvents {
@@ -52,6 +57,11 @@ interface ClientToServerEvents {
     "direct-chat-history": (data: {
     receiverUserId: string
 }) => void;
+
+    "notify-typing": (data: {
+        receiverUserId: string;
+        typing: boolean;
+    }) => void;
 }
 
 let socket: Socket<ServerToClientEvents, ClientToServerEvents>;
@@ -107,6 +117,16 @@ const connectWithSocketServer = (userDetails: UserDetails) => {
         }
 
     })
+
+    socket.on("notify-typing", (data) => {
+        
+        const receiverId = store.getState().chat.chosenChatDetails
+            ?.userId as string;
+        
+        if (data.senderUserId === receiverId) {
+            store.dispatch(setTyping(data.typing) as any);
+        }
+    });
 };
 
 
@@ -121,4 +141,13 @@ const fetchDirectChatHistory = (data: {
     socket.emit("direct-chat-history", data);
 };
 
-export { connectWithSocketServer, sendDirectMessage, fetchDirectChatHistory };
+
+const notifyTyping = (data: {
+    receiverUserId: string;
+    typing: boolean;
+}) => {
+    socket.emit("notify-typing", data);
+};
+
+
+export { connectWithSocketServer, sendDirectMessage, fetchDirectChatHistory, notifyTyping };

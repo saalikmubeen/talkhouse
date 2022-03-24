@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { styled } from "@mui/system";
 import { useAppSelector } from "../../../store";
-import { sendDirectMessage } from "../../../socket/socketConnection";
+import { notifyTyping, sendDirectMessage } from "../../../socket/socketConnection";
 
 const MainContainer = styled("div")({
     height: "60px",
@@ -24,6 +24,10 @@ const Input = styled("input")({
 
 const NewMessageInput = () => {
     const [message, setMessage] = useState("");
+    const [focused, setFocused] = useState(false);
+
+    const onFocus = () => setFocused(true);
+    const onBlur = () => setFocused(false);
 
     const chatDetails = useAppSelector((state) => state.chat.chosenChatDetails);
 
@@ -39,13 +43,28 @@ const NewMessageInput = () => {
         }
     };
 
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setMessage(e.target.value)
+    };
+
+
+    useEffect(() => {
+
+        // notify the receiverUser that the user(sender) is typing
+        notifyTyping({ receiverUserId: chatDetails?.userId!, typing: focused });
+
+    }, [focused]);
+
     return (
         <MainContainer>
             <Input
                 placeholder={`Write message to ${chatDetails?.username}`}
                 value={message}
-                onChange={(e) => setMessage(e.target.value)}
+                onChange={handleChange}
                 onKeyDown={handleSendMessage}
+                onFocus={onFocus}
+                onBlur={onBlur}
             />
         </MainContainer>
     );

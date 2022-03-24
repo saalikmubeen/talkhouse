@@ -10,7 +10,7 @@ import DateSeparator from "./DateSeparator";
 
 
 const MainContainer = styled("div")({
-    height: "calc(100% - 60px)",
+    height: "calc(100% - 142px)",
     overflow: "auto",
     display: "flex",
     flexDirection: "column",
@@ -63,9 +63,9 @@ const Messages = () => {
 
                 return (
                     <div key={message._id} style={{ width: "97%" }}>
-                        {(!isSameDay || index === 0) && (
+                        {/* {(!isSameDay || index === 0) && (
                             <DateSeparator date={message.createdAt} />
-                        )}
+                        )} */}
 
                         <Message
                             content={message.content}
