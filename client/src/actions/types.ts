@@ -113,6 +113,7 @@ export interface SetTyping {
     type: actionTypes.setTyping;
     payload: {
         typing: boolean;
+        userId: string;
     };
 }
 

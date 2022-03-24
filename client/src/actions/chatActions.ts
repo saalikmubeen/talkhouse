@@ -20,11 +20,9 @@ export const setMessages = (messages: Array<Message>): SetMessages => {
 };
 
 
-export const setTyping = (typing: boolean): SetTyping => {
+export const setTyping = (typing: {userId: string, typing: boolean}): SetTyping => {
     return {
         type: actionTypes.setTyping,
-        payload: {
-            typing: typing
-        }
+        payload: typing
     };
 };

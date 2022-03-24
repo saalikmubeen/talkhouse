@@ -23,7 +23,10 @@ interface ChatState {
     chosenChatDetails: {
         userId: string,
         username: string,
-        typing: boolean,
+        typing: {
+            userId : string; // id of the user who's typing;
+            typing: boolean; 
+        },
     } | null;
     messages: Array<Message>;
 }
@@ -48,7 +51,10 @@ const chatReducer: Reducer<ChatState, ChatActions> = (
                 ...state,
                 chosenChatDetails: {
                     ...action.payload,
-                    typing: false,
+                    typing: {
+                        typing: false,
+                        userId: ""
+                    },
                 },
             };
 
@@ -64,7 +70,7 @@ const chatReducer: Reducer<ChatState, ChatActions> = (
                 chosenChatDetails: {
                     userId: state.chosenChatDetails?.userId!,
                     username: state.chosenChatDetails?.username!,
-                    typing: action.payload.typing
+                    typing: action.payload
                 }
             }
 

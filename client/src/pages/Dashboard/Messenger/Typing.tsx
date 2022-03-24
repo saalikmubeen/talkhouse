@@ -13,12 +13,13 @@ const GifContainer = styled("div")({
 });
 
 const Typing = () => {
-    const chatDetails = useAppSelector(state => state.chat.chosenChatDetails);
+    const {chosenChatDetails} = useAppSelector(state => state.chat);
+    
     return (
         <GifContainer>
-            {chatDetails?.typing && (
+            {(chosenChatDetails?.typing.typing && chosenChatDetails.userId === chosenChatDetails.typing.userId) && (
                 <>
-                    <Avatar username={chatDetails?.username!} />
+                    <Avatar username={chosenChatDetails?.username!} />
                     <img
                         src={gif}
                         alt="dots"

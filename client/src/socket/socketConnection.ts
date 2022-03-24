@@ -120,12 +120,15 @@ const connectWithSocketServer = (userDetails: UserDetails) => {
 
     socket.on("notify-typing", (data) => {
         
-        const receiverId = store.getState().chat.chosenChatDetails
-            ?.userId as string;
+        // const receiverId = store.getState().chat.chosenChatDetails
+        //     ?.userId as string;
         
-        if (data.senderUserId === receiverId) {
-            store.dispatch(setTyping(data.typing) as any);
-        }
+        // if (data.senderUserId === receiverId) {
+        //     store.dispatch(setTyping(data.typing) as any);
+        // }
+
+
+        store.dispatch(setTyping({typing: data.typing, userId: data.senderUserId}) as any);
     });
 };
 
