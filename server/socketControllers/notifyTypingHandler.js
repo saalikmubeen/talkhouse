@@ -5,7 +5,7 @@ const notifyTypingHandler = (socket, io, data) => {
 
     const {receiverUserId, typing} = data;
 
-    const activeConnections = getActiveConnections(receiverUserId.toString());
+    const activeConnections = getActiveConnections(receiverUserId?.toString());
 
     activeConnections.forEach((socketId) => {
 

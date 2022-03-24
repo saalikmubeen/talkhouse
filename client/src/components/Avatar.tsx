@@ -21,7 +21,7 @@ const Avatar = ({ username, large }: {
 }) => {
     return (
         <AvatarPreview style={large ? { height: "80px", width: "80px" } : {}}>
-            {username.substring(0, 2)}
+            {username?.substring(0, 2)}
         </AvatarPreview>
     );
 };

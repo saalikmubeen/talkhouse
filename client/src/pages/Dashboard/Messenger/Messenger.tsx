@@ -15,7 +15,7 @@ const Messenger = () => {
   const chosenChatDetails = useAppSelector((state) => state.chat.chosenChatDetails);
 
   return <MainContainer>
-    {chosenChatDetails ?  <ChatDetails/> : <WelcomeMessage/>}
+    {chosenChatDetails?.userId ?  <ChatDetails/> : <WelcomeMessage/>}
   </MainContainer>;
 };
 

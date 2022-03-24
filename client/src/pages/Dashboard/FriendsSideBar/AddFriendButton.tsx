@@ -25,10 +25,14 @@ const AddFriendButton = () => {
                   fontWeight: 500,
                   margin: "20px 0px",
                   marginTop: "10px",
-                  marginLeft: "5px",
-                  width: "80%",
+                  marginLeft: "10px",
+                  width: "120px",
                   height: "30px",
                   background: "#3ba55d",
+                  zIndex: 100,
+                  position: "absolute",
+                  top: "0",
+                  left: "0",
               }}
               onClick={handleOpenAddFriendDialog}
           >
