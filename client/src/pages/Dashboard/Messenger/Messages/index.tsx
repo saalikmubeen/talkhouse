@@ -55,17 +55,20 @@ const Messages = () => {
         <MainContainer>
             <MessagesHeader />
             {messages.map((message, index) => {
-                const today = new Date(Date.now()).toDateString();
-                const messageDate = new Date(message.createdAt).toDateString();
-                const isSameDay = today === messageDate;
+
+                const thisMessageDate = new Date(message.createdAt).toDateString();
+                const prevMessageDate = index > 0 && new Date(messages[index - 1]?.createdAt).toDateString();
+
+                const isSameDay = index > 0 ? thisMessageDate === prevMessageDate : true;
+
                 const incomingMessage =
                     message.author._id === chatDetails?.userId;
 
                 return (
                     <div key={message._id} style={{ width: "97%" }}>
-                        {/* {(!isSameDay || index === 0) && (
+                        {(!isSameDay || index === 0) && (
                             <DateSeparator date={message.createdAt} />
-                        )} */}
+                        )}
 
                         <Message
                             content={message.content}
