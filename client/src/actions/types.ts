@@ -13,6 +13,7 @@ export enum actionTypes {
     setChatType,
     setChosenChatDetails,
     setMessages,
+    resetChat,
     
     setTyping,
 }
@@ -94,6 +95,10 @@ export interface SetChosenChatDetails {
     }
 }
 
+export interface ResetChat {
+    type: actionTypes.resetChat
+}
+
 export interface Message {
     _id: string;
     content: string;
@@ -120,4 +125,4 @@ export interface SetTyping {
 export type AuthActions = AuthSuccessAction | AuthErrorAction | LogoutAction; 
 export type AlertActions = ShowAlertAction | HideAlertAction;
 export type FriendsActions = SetPendingInvitationAction | SetFriends | SetOnlineUsers;
-export type ChatActions = SetChosenChatDetails | SetMessages | SetTyping;
+export type ChatActions = SetChosenChatDetails | SetMessages | SetTyping | ResetChat;

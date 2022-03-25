@@ -74,6 +74,13 @@ const chatReducer: Reducer<ChatState, ChatActions> = (
                 }
             }
 
+        case actionTypes.resetChat:
+            return {
+                ...state,
+                chosenChatDetails: null,
+                messages: []
+            }
+
         default:
             return state
     }

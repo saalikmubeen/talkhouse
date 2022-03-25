@@ -29,6 +29,8 @@ const FriendsListItem = ({
 
     const { chosenChatDetails } = useAppSelector((state) => state.chat);
 
+    // if this friend is same as the person/user typing and this friend is not the one 
+    // we are currently chatting with(i.e, chosenChatDetails.userId)
     const isFriendTyping =
         chosenChatDetails?.typing.typing &&
         chosenChatDetails.userId !== id &&

@@ -66,15 +66,15 @@ interface ClientToServerEvents {
 
 let socket: Socket<ServerToClientEvents, ClientToServerEvents>;
 
+const SERVER_URL = "http://localhost:5000";
+// const SERVER_URL = "https://saliks-discord.herokuapp.com/";
+
 const connectWithSocketServer = (userDetails: UserDetails) => {
-    socket = io(
-        "http://localhost:5000",
-        {
-            auth: {
-                token: userDetails.token,
-            },
-        }
-    );
+    socket = io(SERVER_URL, {
+        auth: {
+            token: userDetails.token,
+        },
+    });
 
     socket.on("connect", () => {
         console.log(

@@ -80,5 +80,9 @@ export const logoutUser = () => {
         dispatch({
             type: actionTypes.logout,
         });
+
+        dispatch({
+            type: actionTypes.resetChat
+        })
     }
 }

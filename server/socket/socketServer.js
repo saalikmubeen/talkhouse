@@ -11,7 +11,7 @@ const { setServerSocketInstance, getOnlineUsers } = require("./connectedUsers");
 const createSocketServer = (server) => {
     const io = socket(server, {
         cors: {
-            origin: "*",
+            origin: "http://localhost:3000",
             methods: ["GET", "POST"],
         },
     });

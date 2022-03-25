@@ -21,7 +21,12 @@ const MainContainer = styled("div")({
 const Messages = () => {
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    const {chosenChatDetails: chatDetails, messages} = useAppSelector((state) => state.chat);
+    const {chat, auth: {userDetails}} = useAppSelector((state) => state);
+
+    const { chosenChatDetails: chatDetails, messages } = chat;
+
+
+
 
     const sameAuthor = (message: MessageType, index: number) => {
 
