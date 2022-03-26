@@ -6,6 +6,7 @@ import AddIcCallIcon from "@mui/icons-material/AddIcCall";
 import VideoCallIcon from "@mui/icons-material/VideoCall";
 import Avatar from "../../../../components/Avatar";
 import { useAppSelector } from "../../../../store";
+import { getLocalStreamPreview } from "../../../../socket/webRTC";
 
 const MainContainer = styled("div")({
     width: "100%",
@@ -70,15 +71,24 @@ const MessagesHeader: React.FC<{
             </NameWrapper>
 
             <CallButtons>
-                <IconButton style={{ color: "white" }}>
+                <IconButton
+                    style={{ color: "white" }}
+                    onClick={() => {
+                        getLocalStreamPreview(true);
+                    }}
+                >
                     <AddIcCallIcon />
                 </IconButton>
 
-                <IconButton style={{ color: "white" }}>
+                <IconButton
+                    style={{ color: "white" }}
+                    onClick={() => {
+                        getLocalStreamPreview(false);
+                    }}
+                >
                     <VideoCallIcon />
                 </IconButton>
             </CallButtons>
-
         </MainContainer>
     );
 };

@@ -8,6 +8,7 @@ import AppBar from "./AppBar/AppBar";
 import { connectWithSocketServer, UserDetails } from "../../socket/socketConnection";
 import { useAppSelector } from "../../store";
 import VideoChat from "../../components/VideoChat";
+import IncomingCall from "../../components/IncomingCall"
 
 const Wrapper = styled("div")({
     width: "100%",
@@ -16,7 +17,7 @@ const Wrapper = styled("div")({
 });
 
 const Dashboard = () => {
-    const userDetails = useAppSelector((state) => state.auth.userDetails);
+    const {auth: {userDetails}, videoChat: {localStream}} = useAppSelector((state) => state);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -38,7 +39,8 @@ const Dashboard = () => {
             <FriendsSideBar />
             <Messenger />
             <AppBar />
-            <VideoChat/>
+            {localStream && <VideoChat />}
+            <IncomingCall/>
         </Wrapper>
     );
 };

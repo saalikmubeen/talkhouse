@@ -16,6 +16,12 @@ export enum actionTypes {
     resetChat,
     
     setTyping,
+
+    setLocalStream,
+    setRemoteStream,
+    setAudioOnly,
+    setScreenSharingStream,
+    setScreenSharing,
 }
 
 
@@ -122,7 +128,13 @@ export interface SetTyping {
     };
 }
 
+interface SetLocalStream {
+    type: actionTypes.setLocalStream;
+    payload: MediaStream;
+}
+
 export type AuthActions = AuthSuccessAction | AuthErrorAction | LogoutAction; 
 export type AlertActions = ShowAlertAction | HideAlertAction;
 export type FriendsActions = SetPendingInvitationAction | SetFriends | SetOnlineUsers;
 export type ChatActions = SetChosenChatDetails | SetMessages | SetTyping | ResetChat;
+export type VideoChatActions = SetLocalStream
