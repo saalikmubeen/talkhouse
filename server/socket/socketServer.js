@@ -1,5 +1,7 @@
 const socket = require("socket.io");
 const requireSocketAuth = require("../middlewares/requireSocketAuth");
+const callRequestHandler = require("../socketControllers/callRequestHandler");
+const callResponseHandler = require("../socketControllers/callResponseHandler");
 const directChatHistoryHandler = require("../socketControllers/directChatHistoryHandler");
 const directMessageHandler = require("../socketControllers/directMessageHandler");
 const disconnectHandler = require("../socketControllers/disconnectHandler");
@@ -41,6 +43,14 @@ const createSocketServer = (server) => {
         socket.on("notify-typing", (data) => {
             notifyTypingHandler(socket, io, data);
         });
+
+        socket.on("call-request", (data) => {
+            callRequestHandler(socket, data);
+        })
+
+        socket.on("call-response", (data) => {
+            callResponseHandler(data);
+        })
 
         socket.on("disconnect", () => {
             console.log(`Connected socket disconnected: ${socket.id}`);
