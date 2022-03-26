@@ -7,6 +7,7 @@ import Messenger from "./Messenger/Messenger";
 import AppBar from "./AppBar/AppBar";
 import { connectWithSocketServer, UserDetails } from "../../socket/socketConnection";
 import { useAppSelector } from "../../store";
+import VideoChat from "../../components/VideoChat";
 
 const Wrapper = styled("div")({
     width: "100%",
@@ -30,12 +31,14 @@ const Dashboard = () => {
 
     }, [userDetails, navigate]);
 
+
     return (
         <Wrapper>
             <SideBar />
             <FriendsSideBar />
             <Messenger />
             <AppBar />
+            <VideoChat/>
         </Wrapper>
     );
 };

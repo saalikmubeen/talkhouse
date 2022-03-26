@@ -1,4 +1,4 @@
-import React, { useEffect, useRef }  from "react";
+import React, { useState, useEffect, useRef }  from "react";
 import { styled } from "@mui/system";
 import MessagesHeader from "./Header";
 import DUMMY_MESSAGES from "./DUMMY_MESSAGES";
@@ -7,11 +7,13 @@ import { useAppSelector } from "../../../../store";
 import { fetchDirectChatHistory } from "../../../../socket/socketConnection";
 import { Message as MessageType } from "../../../../actions/types";
 import DateSeparator from "./DateSeparator";
+import { Typography } from "@mui/material";
 
 
 const MainContainer = styled("div")({
     height: "calc(100% - 142px)",
     overflow: "auto",
+    overflowX: "hidden",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -20,13 +22,10 @@ const MainContainer = styled("div")({
 
 const Messages = () => {
     const messagesEndRef = useRef<HTMLDivElement>(null);
-
+    const [scrollPosition, setScrollPosition] = useState(0);
     const {chat, auth: {userDetails}} = useAppSelector((state) => state);
 
     const { chosenChatDetails: chatDetails, messages } = chat;
-
-
-
 
     const sameAuthor = (message: MessageType, index: number) => {
 
@@ -40,6 +39,10 @@ const Messages = () => {
         if (messagesEndRef.current) {
             messagesEndRef?.current.scrollIntoView({ behavior: "smooth" });
         }
+    };
+
+    const handleScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
+        setScrollPosition(e.currentTarget.scrollTop);
     };
     
     useEffect(() => {
@@ -57,14 +60,28 @@ const Messages = () => {
 
 
     return (
-        <MainContainer>
-            <MessagesHeader />
+        <MainContainer onScroll={handleScroll}>
+            <MessagesHeader scrollPosition={scrollPosition}/>
+
+            <Typography
+                sx={{
+                    color: "#b9bbbe",
+                    marginTop: "15px",
+                }}
+            >
+                This is the beginning of your conversation with {chat.chosenChatDetails?.username}
+            </Typography>
+
             {messages.map((message, index) => {
+                const thisMessageDate = new Date(
+                    message.createdAt
+                ).toDateString();
+                const prevMessageDate =
+                    index > 0 &&
+                    new Date(messages[index - 1]?.createdAt).toDateString();
 
-                const thisMessageDate = new Date(message.createdAt).toDateString();
-                const prevMessageDate = index > 0 && new Date(messages[index - 1]?.createdAt).toDateString();
-
-                const isSameDay = index > 0 ? thisMessageDate === prevMessageDate : true;
+                const isSameDay =
+                    index > 0 ? thisMessageDate === prevMessageDate : true;
 
                 const incomingMessage =
                     message.author._id === chatDetails?.userId;
