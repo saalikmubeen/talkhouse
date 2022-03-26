@@ -3,6 +3,7 @@ import { setFriends, setOnlineUsers, setPendingInvitations } from "../actions/fr
 import {setMessages, setTyping} from "../actions/chatActions";
 import { Message } from "../actions/types";
 import { store } from "../store";
+import { setCallRequest, setCallStatus } from "../actions/videoChatActions";
 
 export interface UserDetails {
     email: string;
@@ -30,6 +31,7 @@ interface OnlineUser {
     socketId: string;
 }
 
+
 interface ServerToClientEvents {
     "friend-invitations": (data: Array<PendingInvitation>) => void;
     "friends-list": (data: Array<Friend>) => void;
@@ -44,6 +46,17 @@ interface ServerToClientEvents {
         senderUserId: string;
         typing: boolean;
     }) => void;
+
+    "call-request": (data: {
+        callerName: string;
+        audioOnly: boolean;
+        callerUserId: string;
+    }) => void;
+
+    "call-response": (data: {
+        accepted: boolean;
+    }) => void;
+
 }
 
 interface ClientToServerEvents {
@@ -54,13 +67,22 @@ interface ClientToServerEvents {
         receiverUserId: string;
     }) => void;
 
-    "direct-chat-history": (data: {
-    receiverUserId: string
-}) => void;
+    "direct-chat-history": (data: { receiverUserId: string }) => void;
 
     "notify-typing": (data: {
         receiverUserId: string;
         typing: boolean;
+    }) => void;
+
+    "call-request": (data: {
+        receiverUserId: string;
+        callerName: string;
+        audioOnly: boolean;
+    }) => void;
+
+    "call-response": (data: {
+        receiverUserId: string;
+        accepted: boolean;
     }) => void;
 }
 
@@ -130,6 +152,17 @@ const connectWithSocketServer = (userDetails: UserDetails) => {
 
         store.dispatch(setTyping({typing: data.typing, userId: data.senderUserId}) as any);
     });
+
+
+    socket.on("call-request", (data) => {
+        console.log(data);
+        store.dispatch(setCallRequest(data) as any);
+    })
+
+    socket.on("call-response", (data) => {
+        const status = data.accepted ? "accepted" : "rejected";
+        store.dispatch(setCallStatus(status) as any);
+    })
 };
 
 
@@ -153,4 +186,20 @@ const notifyTyping = (data: {
 };
 
 
-export { connectWithSocketServer, sendDirectMessage, fetchDirectChatHistory, notifyTyping };
+const callRequest = (data: {
+    receiverUserId: string;
+    callerName: string;
+    audioOnly: boolean;
+}) => {
+    socket.emit("call-request", data);
+};
+
+const callResponse = (data: {
+    receiverUserId: string;
+    accepted: boolean;
+}) => {
+    socket.emit("call-response", data);
+}
+
+
+export { connectWithSocketServer, sendDirectMessage, fetchDirectChatHistory, notifyTyping, callRequest, callResponse };

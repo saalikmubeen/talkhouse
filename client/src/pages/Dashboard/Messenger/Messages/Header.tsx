@@ -1,4 +1,5 @@
 import React, { useRef} from "react";
+import {useDispatch} from 'react-redux';
 import { styled } from "@mui/system";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
@@ -7,6 +8,8 @@ import VideoCallIcon from "@mui/icons-material/VideoCall";
 import Avatar from "../../../../components/Avatar";
 import { useAppSelector } from "../../../../store";
 import { getLocalStreamPreview } from "../../../../socket/webRTC";
+import { callRequest } from "../../../../socket/socketConnection";
+import { setCallStatus } from "../../../../actions/videoChatActions";
 
 const MainContainer = styled("div")({
     width: "100%",
@@ -42,13 +45,12 @@ const MessagesHeader: React.FC<{
     scrollPosition: number;
 }> = ({scrollPosition}) => {
 
+    const dispatch = useDispatch();
     const navRef = useRef<HTMLDivElement>(null);
     let navPosition = navRef.current?.getBoundingClientRect().top;
 
 
-    const username = useAppSelector(
-        (state) => state.chat.chosenChatDetails?.username
-    );
+    const {auth: {userDetails}, chat: {chosenChatDetails}} = useAppSelector((state) => state);
 
     const navActiveStyle = scrollPosition >= navPosition! ? { backgroundColor: "#202225" } : { backgroundColor: "transparent" }; 
 
@@ -56,7 +58,7 @@ const MessagesHeader: React.FC<{
     return (
         <MainContainer style={navActiveStyle} ref={navRef}>
             <NameWrapper>
-                <Avatar username={username!} />
+                <Avatar username={chosenChatDetails?.username!} />
                 <Typography
                     variant="h4"
                     sx={{
@@ -66,7 +68,7 @@ const MessagesHeader: React.FC<{
                         marginRight: "5px",
                     }}
                 >
-                    {username}
+                    {chosenChatDetails?.username}
                 </Typography>
             </NameWrapper>
 
@@ -74,7 +76,14 @@ const MessagesHeader: React.FC<{
                 <IconButton
                     style={{ color: "white" }}
                     onClick={() => {
-                        getLocalStreamPreview(true);
+                        getLocalStreamPreview(true, () => {
+                            dispatch(setCallStatus("ringing"))
+                        });
+                        callRequest({
+                            audioOnly: true,
+                            callerName: "token" in userDetails ? userDetails.username : "",
+                            receiverUserId: chosenChatDetails?.userId!,
+                        })
                     }}
                 >
                     <AddIcCallIcon />
@@ -84,6 +93,16 @@ const MessagesHeader: React.FC<{
                     style={{ color: "white" }}
                     onClick={() => {
                         getLocalStreamPreview(false);
+                        callRequest({
+                            audioOnly: false,
+                            callerName:
+                                "token" in userDetails
+                                    ? userDetails.username
+                                    : "",
+                            receiverUserId: chosenChatDetails?.userId!,
+                        });
+
+                        dispatch(setCallStatus("ringing"));
                     }}
                 >
                     <VideoCallIcon />

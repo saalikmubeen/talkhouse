@@ -1,10 +1,14 @@
 import React from 'react'
+import {useDispatch} from "react-redux";
 import { styled } from "@mui/system";
 import Backdrop from '@mui/material/Backdrop';
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import PhoneInTalkIcon from "@mui/icons-material/PhoneInTalk";
 import PhoneDisabledIcon from "@mui/icons-material/PhoneDisabled";
+import { useAppSelector } from '../store';
+import { setCallRequest } from '../actions/videoChatActions';
+import { callResponse } from '../socket/socketConnection';
 
 
 const MainContainer = styled("div")({
@@ -12,9 +16,18 @@ const MainContainer = styled("div")({
 });
 
 const IncomingCall = () => {
-    const [open, setOpen] = React.useState(false);
-    const handleClose = () => {
-        setOpen(false);
+    const callRequest = useAppSelector(state => state.videoChat.callRequest);
+    const dispatch = useDispatch();
+
+
+    const handleCall = (accepted: boolean) => {
+
+        callResponse({
+            receiverUserId: callRequest!.callerUserId,
+            accepted,
+        });
+
+        dispatch(setCallRequest(null));
     };
    
 
@@ -29,8 +42,7 @@ const IncomingCall = () => {
               alignItems: "center",
               justifyContent: "center",
           }}
-          open={open}
-          onClick={handleClose}
+          open={!!callRequest?.callerUserId}
       >
           <Typography
               sx={{
@@ -40,15 +52,19 @@ const IncomingCall = () => {
                   fontWeight: "bold",
               }}
           >
-              Incoming Call from Andrew
+              Incoming Call from {callRequest?.callerName}
           </Typography>
 
           <MainContainer>
-              <IconButton style={{ color: "green" }}>
+              <IconButton style={{ color: "green" }} onClick={() => {
+                  handleCall(true)
+              }}>
                   <PhoneInTalkIcon />
               </IconButton>
 
-              <IconButton style={{ color: "red" }}>
+              <IconButton style={{ color: "red" }} onClick={() => {
+                  handleCall(false);
+              }}>
                   <PhoneDisabledIcon />
               </IconButton>
           </MainContainer>

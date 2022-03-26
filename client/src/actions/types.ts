@@ -22,6 +22,8 @@ export enum actionTypes {
     setAudioOnly,
     setScreenSharingStream,
     setScreenSharing,
+    setCallRequest,
+    setCallStatus,
 }
 
 
@@ -130,11 +132,28 @@ export interface SetTyping {
 
 interface SetLocalStream {
     type: actionTypes.setLocalStream;
-    payload: MediaStream;
+    payload: MediaStream | null;
+}
+
+interface SetCallRequest {
+    type: actionTypes.setCallRequest;
+    payload: {
+        callerName: string;
+        audioOnly: boolean;
+        callerUserId: string;
+    }
+}
+
+export type CallStatus = "ringing" | "accepted" | "rejected" | null 
+export interface SetCallStatus {
+    type: actionTypes.setCallStatus;
+    payload: {
+        status: CallStatus;
+    }
 }
 
 export type AuthActions = AuthSuccessAction | AuthErrorAction | LogoutAction; 
 export type AlertActions = ShowAlertAction | HideAlertAction;
 export type FriendsActions = SetPendingInvitationAction | SetFriends | SetOnlineUsers;
 export type ChatActions = SetChosenChatDetails | SetMessages | SetTyping | ResetChat;
-export type VideoChatActions = SetLocalStream
+export type VideoChatActions = SetLocalStream | SetCallRequest | SetCallStatus;
