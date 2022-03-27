@@ -76,9 +76,9 @@ const MessagesHeader: React.FC<{
                 <IconButton
                     style={{ color: "white" }}
                     onClick={() => {
-                        getLocalStreamPreview(true, () => {
-                            dispatch(setCallStatus("ringing"))
-                        });
+                        // getLocalStreamPreview(true, () => {
+                        //     dispatch(setCallStatus("ringing"))
+                        // });
                         callRequest({
                             audioOnly: true,
                             callerName: "token" in userDetails ? userDetails.username : "",
@@ -92,7 +92,7 @@ const MessagesHeader: React.FC<{
                 <IconButton
                     style={{ color: "white" }}
                     onClick={() => {
-                        getLocalStreamPreview(false);
+                        // getLocalStreamPreview(false);
                         callRequest({
                             audioOnly: false,
                             callerName:
@@ -102,7 +102,7 @@ const MessagesHeader: React.FC<{
                             receiverUserId: chosenChatDetails?.userId!,
                         });
 
-                        dispatch(setCallStatus("ringing"));
+                        // dispatch(setCallStatus("ringing"));
                     }}
                 >
                     <VideoCallIcon />

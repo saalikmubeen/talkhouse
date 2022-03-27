@@ -1,3 +1,4 @@
+import SimplePeer from "simple-peer";
 import { actionTypes, CallStatus } from "./types";
 
 export const setLocalStream = (stream: MediaStream | null) => {
@@ -6,6 +7,14 @@ export const setLocalStream = (stream: MediaStream | null) => {
         payload: stream,
     };
 }
+
+export const setRemoteStream = (stream: MediaStream | null) => {
+    return {
+        type: actionTypes.setRemoteStream,
+        payload: stream,
+    };
+}
+
 
 export const setCallStatus = (status: CallStatus) => {
     return {
@@ -21,6 +30,7 @@ export const setCallRequest = (callRequest: {
     callerName: string;
     audioOnly: boolean;
     callerUserId: string;
+    signal: SimplePeer.SignalData;
 } | null) => {
     return {
         type: actionTypes.setCallRequest,

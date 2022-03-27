@@ -1,3 +1,5 @@
+import SimplePeer from "simple-peer";
+
 export enum actionTypes {
     authenticate,
     logout,
@@ -135,12 +137,18 @@ interface SetLocalStream {
     payload: MediaStream | null;
 }
 
+interface SetRemoteStream {
+    type: actionTypes.setRemoteStream;
+    payload: MediaStream | null;
+}
+
 interface SetCallRequest {
     type: actionTypes.setCallRequest;
     payload: {
         callerName: string;
         audioOnly: boolean;
         callerUserId: string;
+        signal: SimplePeer.SignalData;
     }
 }
 
@@ -156,4 +164,4 @@ export type AuthActions = AuthSuccessAction | AuthErrorAction | LogoutAction;
 export type AlertActions = ShowAlertAction | HideAlertAction;
 export type FriendsActions = SetPendingInvitationAction | SetFriends | SetOnlineUsers;
 export type ChatActions = SetChosenChatDetails | SetMessages | SetTyping | ResetChat;
-export type VideoChatActions = SetLocalStream | SetCallRequest | SetCallStatus;
+export type VideoChatActions = SetLocalStream | SetRemoteStream | SetCallRequest | SetCallStatus;

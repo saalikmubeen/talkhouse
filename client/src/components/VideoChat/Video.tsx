@@ -35,7 +35,7 @@ const Video: React.FC<{
             <VideoEl
                 ref={videoRef}
                 autoPlay
-                muted={isLocalStream ? true : false}
+                muted={isLocalStream}
             />
         </MainContainer>
     );

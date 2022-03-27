@@ -13,7 +13,7 @@ const { setServerSocketInstance, getOnlineUsers } = require("./connectedUsers");
 const createSocketServer = (server) => {
     const io = socket(server, {
         cors: {
-            origin: "http://localhost:3000",
+            origin: ["http://localhost:3000", "https://talkhouse-tv.netlify.app"],
             methods: ["GET", "POST"],
         },
     });

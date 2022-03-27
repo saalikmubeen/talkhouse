@@ -6,8 +6,8 @@ import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import PhoneInTalkIcon from "@mui/icons-material/PhoneInTalk";
 import PhoneDisabledIcon from "@mui/icons-material/PhoneDisabled";
+import VideocamIcon from "@mui/icons-material/Videocam";
 import { useAppSelector } from '../store';
-import { setCallRequest } from '../actions/videoChatActions';
 import { callResponse } from '../socket/socketConnection';
 
 
@@ -17,17 +17,16 @@ const MainContainer = styled("div")({
 
 const IncomingCall = () => {
     const callRequest = useAppSelector(state => state.videoChat.callRequest);
-    const dispatch = useDispatch();
 
 
-    const handleCall = (accepted: boolean) => {
+    const handleCall = (accepted: boolean, audioOnly: boolean) => {
 
         callResponse({
             receiverUserId: callRequest!.callerUserId,
             accepted,
+            audioOnly
         });
-
-        dispatch(setCallRequest(null));
+       
     };
    
 
@@ -56,15 +55,30 @@ const IncomingCall = () => {
           </Typography>
 
           <MainContainer>
-              <IconButton style={{ color: "green" }} onClick={() => {
-                  handleCall(true)
-              }}>
+              <IconButton
+                  style={{ color: "green" }}
+                  onClick={() => {
+                      handleCall(true, false);
+                  }}
+              >
+                  <VideocamIcon />
+              </IconButton>
+
+              <IconButton
+                  style={{ color: "green" }}
+                  onClick={() => {
+                      handleCall(true, true);
+                  }}
+              >
                   <PhoneInTalkIcon />
               </IconButton>
 
-              <IconButton style={{ color: "red" }} onClick={() => {
-                  handleCall(false);
-              }}>
+              <IconButton
+                  style={{ color: "red" }}
+                  onClick={() => {
+                      handleCall(false, true);
+                  }}
+              >
                   <PhoneDisabledIcon />
               </IconButton>
           </MainContainer>

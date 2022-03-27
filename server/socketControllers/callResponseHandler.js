@@ -4,7 +4,7 @@ const {
 } = require("../socket/connectedUsers");
 
 const callResponseHandler = (data) => {
-    const { receiverUserId, accepted } = data;
+    const { receiverUserId, accepted, signal } = data;
 
     // const userId = socket.user.userId; // user id who accepted/rejected the call
 
@@ -17,6 +17,7 @@ const callResponseHandler = (data) => {
     activeConnections.forEach((socketId) => {
         io.to(socketId).emit("call-response", {
             accepted,
+            signal
         });
     });
 };

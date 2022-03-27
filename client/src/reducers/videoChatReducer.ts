@@ -1,4 +1,5 @@
 import { Reducer } from "redux";
+import SimplePeer from "simple-peer";
 import { VideoChatActions, actionTypes } from "../actions/types";
 
 
@@ -18,6 +19,7 @@ interface VideoChatState {
         callerName: string;
         audioOnly: boolean;
         callerUserId: string;
+        signal: SimplePeer.SignalData;
     } | null;
 }
 
@@ -40,6 +42,12 @@ const videoChatReducer: Reducer<VideoChatState, VideoChatActions> = (
             return {
                 ...state,
                 localStream: action.payload,
+            };
+
+        case actionTypes.setRemoteStream:
+            return {
+                ...state,
+                remoteStream: action.payload,
             };
 
         case actionTypes.setCallRequest:

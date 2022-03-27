@@ -3,7 +3,9 @@ import { setFriends, setOnlineUsers, setPendingInvitations } from "../actions/fr
 import {setMessages, setTyping} from "../actions/chatActions";
 import { Message } from "../actions/types";
 import { store } from "../store";
-import { setCallRequest, setCallStatus } from "../actions/videoChatActions";
+import { setCallRequest, setCallStatus, setRemoteStream } from "../actions/videoChatActions";
+import { getLocalStreamPreview, newPeerConnection } from "./webRTC";
+import SimplePeer from "simple-peer";
 
 export interface UserDetails {
     email: string;
@@ -38,25 +40,23 @@ interface ServerToClientEvents {
     "online-users": (data: Array<OnlineUser>) => void;
 
     "direct-chat-history": (data: {
-        messages: Array<Message>,
-        participants: Array<string>
+        messages: Array<Message>;
+        participants: Array<string>;
     }) => void;
 
-    "notify-typing": (data: {
-        senderUserId: string;
-        typing: boolean;
-    }) => void;
+    "notify-typing": (data: { senderUserId: string; typing: boolean }) => void;
 
     "call-request": (data: {
         callerName: string;
         audioOnly: boolean;
         callerUserId: string;
+        signal: SimplePeer.SignalData;
     }) => void;
 
     "call-response": (data: {
         accepted: boolean;
+        signal: SimplePeer.SignalData;
     }) => void;
-
 }
 
 interface ClientToServerEvents {
@@ -78,11 +78,13 @@ interface ClientToServerEvents {
         receiverUserId: string;
         callerName: string;
         audioOnly: boolean;
+        signal: SimplePeer.SignalData;
     }) => void;
 
     "call-response": (data: {
         receiverUserId: string;
         accepted: boolean;
+        signal?: SimplePeer.SignalData;
     }) => void;
 }
 
@@ -159,10 +161,10 @@ const connectWithSocketServer = (userDetails: UserDetails) => {
         store.dispatch(setCallRequest(data) as any);
     })
 
-    socket.on("call-response", (data) => {
-        const status = data.accepted ? "accepted" : "rejected";
-        store.dispatch(setCallStatus(status) as any);
-    })
+    // socket.on("call-response", (data) => {
+    //     const status = data.accepted ? "accepted" : "rejected";
+    //     store.dispatch(setCallStatus(status) as any);
+    // })
 };
 
 
@@ -191,14 +193,88 @@ const callRequest = (data: {
     callerName: string;
     audioOnly: boolean;
 }) => {
-    socket.emit("call-request", data);
+    // socket.emit("call-request", data);
+
+    
+    const peerConnection = () => {
+        const peer = newPeerConnection(true);
+
+        peer.on("signal", (signal) => {
+            console.log("SIGNAL", signal);
+            // TODO send data to server
+
+            socket.emit("call-request", {
+                ...data,
+                signal,
+            });
+        });
+
+        peer.on("stream", (stream) => {
+            console.log("REMOTE STREAM", stream);
+            // TODO set remote stream
+            store.dispatch(setRemoteStream(stream) as any);
+        });
+
+        socket.on("call-response", (data) => {
+            const status = data.accepted ? "accepted" : "rejected";
+            store.dispatch(setCallStatus(status) as any);
+
+            if (data.accepted && data.signal) {
+                console.log("ACCEPTED", data.signal);
+                peer.signal(data.signal);
+            }
+        });
+    }
+
+    getLocalStreamPreview(data.audioOnly, () => {
+        peerConnection();
+        store.dispatch(setCallStatus("ringing") as any)
+    })
 };
 
 const callResponse = (data: {
     receiverUserId: string;
     accepted: boolean;
+    audioOnly : boolean;
 }) => {
+
+
     socket.emit("call-response", data);
+
+    if (!data.accepted) {
+        return store.dispatch(setCallRequest(null) as any);
+    }
+
+    const peerConnection = () => {
+        const peer = newPeerConnection(false);
+
+        peer.on("signal", (signal) => {
+            console.log("SIGNAL", signal);
+
+            socket.emit("call-response", {
+                ...data,
+                signal,
+            });
+        });
+        peer.on("stream", (stream) => {
+            console.log("REMOTE STREAM 1", stream);
+            // TODO set remote stream
+            store.dispatch(setRemoteStream(stream) as any);
+        });
+
+        console.log(
+            "CALL RESPONSE",
+            store.getState().videoChat.callRequest?.signal!
+        );
+
+        peer.signal(store.getState().videoChat.callRequest?.signal!);
+    }
+
+    getLocalStreamPreview(data.audioOnly, () => {
+        peerConnection();
+        store.dispatch(setCallRequest(null) as any);
+    });
+
 }
 
 

@@ -12,10 +12,12 @@ const MainContainer = styled("div")({
 });
 
 const VideosContainer = () => {
-    const {localStream, callStatus} = useAppSelector(state => state.videoChat);
+    const {localStream, callStatus, remoteStream} = useAppSelector(state => state.videoChat);
     return (
         <MainContainer>
-            <Video stream={localStream!} isLocalStream={true} />
+            {localStream && (
+                <Video stream={localStream} isLocalStream={true} />
+            )}
 
             {callStatus !== "accepted" && (
                 <Typography
@@ -27,8 +29,14 @@ const VideosContainer = () => {
                         width: "100%",
                     }}
                 >
-                    {callStatus === "ringing" ? "Ringing...." : callStatus === "rejected" && "Call Rejected"}
+                    {callStatus === "ringing"
+                        ? "Ringing...."
+                        : callStatus === "rejected" && "Call Rejected"}
                 </Typography>
+            )}
+
+            {remoteStream && (
+                <Video stream={remoteStream} isLocalStream={false} />
             )}
         </MainContainer>
     );
