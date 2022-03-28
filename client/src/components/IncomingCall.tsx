@@ -1,5 +1,4 @@
 import React from 'react'
-import {useDispatch} from "react-redux";
 import { styled } from "@mui/system";
 import Backdrop from '@mui/material/Backdrop';
 import Typography from "@mui/material/Typography";
@@ -12,8 +11,16 @@ import { callResponse } from '../socket/socketConnection';
 
 
 const MainContainer = styled("div")({
-    display: "block"
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    padding: "15px 20px",
+    borderRadius: "30px",
 });
+
+
 
 const IncomingCall = () => {
     const callRequest = useAppSelector(state => state.videoChat.callRequest);
@@ -30,7 +37,6 @@ const IncomingCall = () => {
     };
    
 
-
   return (
       <Backdrop
           sx={{
@@ -43,44 +49,46 @@ const IncomingCall = () => {
           }}
           open={!!callRequest?.callerUserId}
       >
-          <Typography
-              sx={{
-                  color: "#b9bbbe",
-                  marginBottom: "3px",
-                  fontSize: "20px",
-                  fontWeight: "bold",
-              }}
-          >
-              Incoming Call from {callRequest?.callerName}
-          </Typography>
-
           <MainContainer>
-              <IconButton
-                  style={{ color: "green" }}
-                  onClick={() => {
-                      handleCall(true, false);
+              <Typography
+                  sx={{
+                      color: "black",
+                      marginBottom: "3px",
+                      fontSize: "20px",
+                      fontWeight: "bold",
                   }}
               >
-                  <VideocamIcon />
-              </IconButton>
+                  Incoming Call from {callRequest?.callerName}
+              </Typography>
 
-              <IconButton
-                  style={{ color: "green" }}
-                  onClick={() => {
-                      handleCall(true, true);
-                  }}
-              >
-                  <PhoneInTalkIcon />
-              </IconButton>
+              <div>
+                  <IconButton
+                     color='success'
+                      onClick={() => {
+                          handleCall(true, false);
+                      }}
+                  >
+                      <VideocamIcon />
+                  </IconButton>
 
-              <IconButton
-                  style={{ color: "red" }}
-                  onClick={() => {
-                      handleCall(false, true);
-                  }}
-              >
-                  <PhoneDisabledIcon />
-              </IconButton>
+                  <IconButton
+                      color="success"
+                      onClick={() => {
+                          handleCall(true, true);
+                      }}
+                  >
+                      <PhoneInTalkIcon />
+                  </IconButton>
+
+                  <IconButton
+                      color="error"
+                      onClick={() => {
+                          handleCall(false, true);
+                      }}
+                  >
+                      <PhoneDisabledIcon />
+                  </IconButton>
+              </div>
           </MainContainer>
       </Backdrop>
   );
