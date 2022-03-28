@@ -12,11 +12,16 @@ const MainContainer = styled("div")({
 });
 
 const VideosContainer = () => {
-    const {localStream, callStatus, remoteStream} = useAppSelector(state => state.videoChat);
+    const {localStream, callStatus, remoteStream, screenSharingStream} = useAppSelector(state => state.videoChat);
     return (
         <MainContainer>
             {localStream && (
-                <Video stream={localStream} isLocalStream={true} />
+                <Video
+                    stream={
+                        screenSharingStream ? screenSharingStream : localStream
+                    }
+                    isLocalStream={true}
+                />
             )}
 
             {callStatus !== "accepted" && (

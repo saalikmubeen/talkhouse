@@ -69,3 +69,14 @@ export const setOtherUserId = (otherUserId: string) => {
         },
     };
 };
+
+
+export const setScreenSharingStream = (stream: MediaStream | null) => {
+    return {
+        type: actionTypes.setScreenSharingStream,
+        payload: {
+            stream,
+            isScreenSharing: !!stream 
+        },
+    };
+}

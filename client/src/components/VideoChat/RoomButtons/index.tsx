@@ -20,18 +20,18 @@ const MainContainer = styled("div")({
 
 const RoomButtons = () => {
     
-    const { localStream } = useAppSelector(state => state.videoChat);
+    const videoChat = useAppSelector(state => state.videoChat);
 
-    if (!localStream) {
+    if (!videoChat.localStream) {
         return null;
     }
 
     return (
         <MainContainer>
-            <ScreenShare localStream={localStream}/>
-            <Microphone  localStream={localStream}/>
+            <ScreenShare videoChat={videoChat}/>
+            <Microphone  localStream={videoChat.localStream}/>
             <CloseRoom />
-            <Camera localStream={localStream}/>
+            <Camera localStream={videoChat.localStream}/>
         </MainContainer>
     );
 };

@@ -58,6 +58,8 @@ export const newPeerConnection = (initiator: boolean) => {
         config: configuration,
         stream: stream,
     });
+
+    
     
     return peer;
 }

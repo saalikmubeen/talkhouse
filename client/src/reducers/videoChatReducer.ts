@@ -4,12 +4,12 @@ import { VideoChatActions, actionTypes } from "../actions/types";
 
 
 
-interface VideoChatState {
+export interface VideoChatState {
     localStream: MediaStream | null;
     remoteStream: MediaStream | null;
     otherUserId: string | null;
     audioOnly: boolean;
-    screenSharingStream: MediaStream | null;
+    screenSharingStream: MediaStream | null; 
     screenSharing: boolean;
 
     // what caller will see
@@ -72,6 +72,13 @@ const videoChatReducer: Reducer<VideoChatState, VideoChatActions> = (
 
         case actionTypes.resetVideoChatState:
             return initialState;
+
+        case actionTypes.setScreenSharingStream:
+            return {
+                ...state,
+                screenSharingStream: action.payload.stream,
+                screenSharing: action.payload.isScreenSharing
+            };
         
         default:
             return state;

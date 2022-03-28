@@ -95,6 +95,8 @@ interface ClientToServerEvents {
     }) => void
 }
 
+let currentPeerConnection: any = null;
+
 let socket: Socket<ServerToClientEvents, ClientToServerEvents>;
 
 const SERVER_URL = "http://localhost:5000";
@@ -211,6 +213,8 @@ const callRequest = (data: {
     const peerConnection = () => {
         const peer = newPeerConnection(true);
 
+        currentPeerConnection = peer;
+
         peer.on("signal", (signal) => {
             console.log("SIGNAL", signal);
             // TODO send data to server
@@ -261,6 +265,8 @@ const callResponse = (data: {
     const peerConnection = () => {
         const peer = newPeerConnection(false);
 
+        currentPeerConnection = peer;
+
         peer.on("signal", (signal) => {
             console.log("SIGNAL", signal);
 
@@ -298,4 +304,4 @@ const notifyChatLeft = (receiverUserId: string) => {
 
 }
 
-export { connectWithSocketServer, sendDirectMessage, fetchDirectChatHistory, notifyTyping, callRequest, callResponse, notifyChatLeft };
+export { connectWithSocketServer, sendDirectMessage, fetchDirectChatHistory, notifyTyping, callRequest, callResponse, notifyChatLeft, currentPeerConnection };

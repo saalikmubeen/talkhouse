@@ -6,8 +6,8 @@ import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 
 const MainContainer = styled("div")({
     position: "absolute",
-    bottom: "10px",
-    right: "10px",
+    top: "10px",
+    left: "10px",
 });
 
 

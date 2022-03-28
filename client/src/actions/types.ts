@@ -173,8 +173,17 @@ interface setOtherUserId {
     }
 }
 
+interface setScreenSharingStream {
+    type: actionTypes.setScreenSharingStream;
+    payload: {
+        stream: MediaStream | null;
+        isScreenSharing: boolean;
+    }
+}
+
+
 export type AuthActions = AuthSuccessAction | AuthErrorAction | LogoutAction; 
 export type AlertActions = ShowAlertAction | HideAlertAction;
 export type FriendsActions = SetPendingInvitationAction | SetFriends | SetOnlineUsers;
 export type ChatActions = SetChosenChatDetails | SetMessages | SetTyping | ResetChat;
-export type VideoChatActions = SetLocalStream | SetRemoteStream | SetCallRequest | SetCallStatus | ClearVideChatState | setOtherUserId;
+export type VideoChatActions = SetLocalStream | SetRemoteStream | SetCallRequest | SetCallStatus | ClearVideChatState | setOtherUserId | setScreenSharingStream;
