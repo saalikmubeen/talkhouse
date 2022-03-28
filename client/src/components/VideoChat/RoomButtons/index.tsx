@@ -4,6 +4,7 @@ import Camera from "./Camera";
 import Microphone from "./Microphone";
 import CloseRoom from "./CloseRoom";
 import ScreenShare from "./ScreenShare";
+import {useAppSelector} from "../../../store"
 
 
 const MainContainer = styled("div")({
@@ -19,13 +20,18 @@ const MainContainer = styled("div")({
 
 const RoomButtons = () => {
     
+    const { localStream } = useAppSelector(state => state.videoChat);
+
+    if (!localStream) {
+        return null;
+    }
 
     return (
         <MainContainer>
-            <ScreenShare />
-            <Microphone  />
+            <ScreenShare localStream={localStream}/>
+            <Microphone  localStream={localStream}/>
             <CloseRoom />
-            <Camera />
+            <Camera localStream={localStream}/>
         </MainContainer>
     );
 };

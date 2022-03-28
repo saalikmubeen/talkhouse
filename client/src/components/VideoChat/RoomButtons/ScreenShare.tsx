@@ -3,12 +3,10 @@ import IconButton from "@mui/material/IconButton";
 import ScreenShareIcon from "@mui/icons-material/ScreenShare";
 import StopScreenShareIcon from "@mui/icons-material/StopScreenShare";
 
-const constraints = {
-    audio: false,
-    video: true,
-};
 
-const ScreenShare = () => {
+const ScreenShare: React.FC<{
+    localStream: MediaStream;
+}> = () => {
 
     const [screenShareEnabled, setScreenShareEnabled] = useState(false);
 
