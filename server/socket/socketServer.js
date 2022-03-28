@@ -6,6 +6,7 @@ const directChatHistoryHandler = require("../socketControllers/directChatHistory
 const directMessageHandler = require("../socketControllers/directMessageHandler");
 const disconnectHandler = require("../socketControllers/disconnectHandler");
 const newConnectionHandler = require("../socketControllers/newConnectionHandler");
+const notifyChatLeft = require("../socketControllers/notifyChatLeft");
 const notifyTypingHandler = require("../socketControllers/notifyTypingHandler");
 const { setServerSocketInstance, getOnlineUsers } = require("./connectedUsers");
 
@@ -49,8 +50,12 @@ const createSocketServer = (server) => {
         })
 
         socket.on("call-response", (data) => {
-            callResponseHandler(data);
+            callResponseHandler(socket, data);
         })
+
+        socket.on("notify-chat-left", (data) => {
+            notifyChatLeft(socket, data);
+        });
 
         socket.on("disconnect", () => {
             console.log(`Connected socket disconnected: ${socket.id}`);

@@ -21,11 +21,13 @@ export enum actionTypes {
 
     setLocalStream,
     setRemoteStream,
+    setOtherUserId,
     setAudioOnly,
     setScreenSharingStream,
     setScreenSharing,
     setCallRequest,
     setCallStatus,
+    resetVideoChatState
 }
 
 
@@ -152,7 +154,7 @@ interface SetCallRequest {
     }
 }
 
-export type CallStatus = "ringing" | "accepted" | "rejected" | null 
+export type CallStatus = "ringing" | "accepted" | "rejected" | "left" | null 
 export interface SetCallStatus {
     type: actionTypes.setCallStatus;
     payload: {
@@ -160,8 +162,19 @@ export interface SetCallStatus {
     }
 }
 
+interface ClearVideChatState {
+    type: actionTypes.resetVideoChatState;
+}
+
+interface setOtherUserId {
+    type: actionTypes.setOtherUserId;
+    payload: {
+        otherUserId: string | null;
+    }
+}
+
 export type AuthActions = AuthSuccessAction | AuthErrorAction | LogoutAction; 
 export type AlertActions = ShowAlertAction | HideAlertAction;
 export type FriendsActions = SetPendingInvitationAction | SetFriends | SetOnlineUsers;
 export type ChatActions = SetChosenChatDetails | SetMessages | SetTyping | ResetChat;
-export type VideoChatActions = SetLocalStream | SetRemoteStream | SetCallRequest | SetCallStatus;
+export type VideoChatActions = SetLocalStream | SetRemoteStream | SetCallRequest | SetCallStatus | ClearVideChatState | setOtherUserId;

@@ -25,10 +25,15 @@ const Video: React.FC<{
         video!.srcObject = stream;
 
         video!.onloadedmetadata = () => {
-            video!.play();
+            video!.play()
+
+            if (isLocalStream) {
+                video!.muted = true;
+                video!.volume = 0;
+            }
         };
 
-    }, [stream]);
+    }, [stream, isLocalStream]);
 
     return (
         <MainContainer>

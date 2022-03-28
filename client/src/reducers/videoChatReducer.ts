@@ -7,12 +7,13 @@ import { VideoChatActions, actionTypes } from "../actions/types";
 interface VideoChatState {
     localStream: MediaStream | null;
     remoteStream: MediaStream | null;
+    otherUserId: string | null;
     audioOnly: boolean;
     screenSharingStream: MediaStream | null;
     screenSharing: boolean;
 
     // what caller will see
-    callStatus: "ringing" | "accepted" | "rejected" | null;
+    callStatus: "ringing" | "accepted" | "rejected" | "left" | null;
 
     // what receiver will see
     callRequest: {
@@ -26,6 +27,7 @@ interface VideoChatState {
 const initialState: VideoChatState = {
     localStream: null,
     remoteStream: null,
+    otherUserId: null, // id of the other user in the call
     audioOnly: false,
     screenSharingStream: null,
     screenSharing: false,
@@ -57,11 +59,19 @@ const videoChatReducer: Reducer<VideoChatState, VideoChatActions> = (
             };
 
         case actionTypes.setCallStatus:
-            console.log("hello")
             return {
                 ...state,
                 callStatus: action.payload.status,
             };
+
+        case actionTypes.setOtherUserId:
+            return {
+                ...state,
+                otherUserId: action.payload.otherUserId,
+        };
+
+        case actionTypes.resetVideoChatState:
+            return initialState;
         
         default:
             return state;

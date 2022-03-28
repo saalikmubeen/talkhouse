@@ -3,7 +3,7 @@ import { setFriends, setOnlineUsers, setPendingInvitations } from "../actions/fr
 import {setMessages, setTyping} from "../actions/chatActions";
 import { Message } from "../actions/types";
 import { store } from "../store";
-import { setCallRequest, setCallStatus, setRemoteStream } from "../actions/videoChatActions";
+import { setCallRequest, setCallStatus, setOtherUserId, setRemoteStream, clearVideoChat } from "../actions/videoChatActions";
 import { getLocalStreamPreview, newPeerConnection } from "./webRTC";
 import SimplePeer from "simple-peer";
 
@@ -54,9 +54,12 @@ interface ServerToClientEvents {
     }) => void;
 
     "call-response": (data: {
+        otherUserId: string; // the user who is being called (who accepted or rejected the call)
         accepted: boolean;
         signal: SimplePeer.SignalData;
     }) => void;
+
+    "notify-chat-left": () => void;
 }
 
 interface ClientToServerEvents {
@@ -86,6 +89,10 @@ interface ClientToServerEvents {
         accepted: boolean;
         signal?: SimplePeer.SignalData;
     }) => void;
+
+    "notify-chat-left": (data: {
+        receiverUserId: string;
+    }) => void
 }
 
 let socket: Socket<ServerToClientEvents, ClientToServerEvents>;
@@ -165,6 +172,11 @@ const connectWithSocketServer = (userDetails: UserDetails) => {
     //     const status = data.accepted ? "accepted" : "rejected";
     //     store.dispatch(setCallStatus(status) as any);
     // })
+
+
+    socket.on("notify-chat-left", () => {
+        store.dispatch(clearVideoChat("User left the chat...!") as any);
+    })
 };
 
 
@@ -221,6 +233,7 @@ const callRequest = (data: {
 
             if (data.accepted && data.signal) {
                 console.log("ACCEPTED", data.signal);
+                store.dispatch(setOtherUserId(data.otherUserId) as any);
                 peer.signal(data.signal);
             }
         });
@@ -277,5 +290,12 @@ const callResponse = (data: {
 
 }
 
+const notifyChatLeft = (receiverUserId: string) => {
 
-export { connectWithSocketServer, sendDirectMessage, fetchDirectChatHistory, notifyTyping, callRequest, callResponse };
+    socket.emit("notify-chat-left", {
+        receiverUserId,
+    });
+
+}
+
+export { connectWithSocketServer, sendDirectMessage, fetchDirectChatHistory, notifyTyping, callRequest, callResponse, notifyChatLeft };

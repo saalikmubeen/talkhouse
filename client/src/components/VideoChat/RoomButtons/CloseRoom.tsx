@@ -3,15 +3,24 @@ import { useDispatch } from "react-redux";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { useAppSelector } from "../../../store";
-import { setLocalStream } from "../../../actions/videoChatActions";
+import { clearVideoChat } from "../../../actions/videoChatActions";
+import { notifyChatLeft } from "../../../socket/socketConnection";
 
 const CloseRoom = () => {
     const dispatch = useDispatch();
-    const localStream = useAppSelector(state => state.videoChat.localStream);
+    const {
+        videoChat: { localStream, otherUserId },
+    } = useAppSelector((state) => state);
 
     const handleLeaveRoom = () => {
-        localStream?.getTracks().forEach(track => track.stop());
-        dispatch(setLocalStream(null));
+        localStream?.getTracks().forEach((track) => track.stop());
+
+        // notify other user that I left the call
+        if (otherUserId) {
+            notifyChatLeft(otherUserId);
+        }
+
+        dispatch(clearVideoChat("You left the chat"));
     };
 
     return (
