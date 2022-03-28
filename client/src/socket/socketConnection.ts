@@ -3,7 +3,7 @@ import { setFriends, setOnlineUsers, setPendingInvitations } from "../actions/fr
 import {setMessages, setTyping} from "../actions/chatActions";
 import { Message } from "../actions/types";
 import { store } from "../store";
-import { setCallRequest, setCallStatus, setOtherUserId, setRemoteStream, clearVideoChat } from "../actions/videoChatActions";
+import { setCallRequest, setCallStatus, setOtherUserId, setRemoteStream, clearVideoChat, setAudioOnly } from "../actions/videoChatActions";
 import { getLocalStreamPreview, newPeerConnection } from "./webRTC";
 import SimplePeer from "simple-peer";
 
@@ -208,7 +208,6 @@ const callRequest = (data: {
     audioOnly: boolean;
 }) => {
     // socket.emit("call-request", data);
-
     
     const peerConnection = () => {
         const peer = newPeerConnection(true);
@@ -246,6 +245,7 @@ const callRequest = (data: {
     getLocalStreamPreview(data.audioOnly, () => {
         peerConnection();
         store.dispatch(setCallStatus("ringing") as any)
+        store.dispatch(setAudioOnly(data.audioOnly) as any);
     })
 };
 
@@ -281,17 +281,13 @@ const callResponse = (data: {
             store.dispatch(setRemoteStream(stream) as any);
         });
 
-        console.log(
-            "CALL RESPONSE",
-            store.getState().videoChat.callRequest?.signal!
-        );
-
         peer.signal(store.getState().videoChat.callRequest?.signal!);
     }
 
     getLocalStreamPreview(data.audioOnly, () => {
         peerConnection();
         store.dispatch(setCallRequest(null) as any);
+        store.dispatch(setAudioOnly(data.audioOnly) as any);
     });
 
 }

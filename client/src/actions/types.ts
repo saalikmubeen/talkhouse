@@ -162,7 +162,7 @@ export interface SetCallStatus {
     }
 }
 
-interface ClearVideChatState {
+export interface ClearVideChatState {
     type: actionTypes.resetVideoChatState;
 }
 
@@ -181,9 +181,16 @@ interface setScreenSharingStream {
     }
 }
 
+interface SetAudioOnly {
+    type: actionTypes.setAudioOnly;
+    payload: {
+        audioOnly: boolean;
+    }
+}
 
 export type AuthActions = AuthSuccessAction | AuthErrorAction | LogoutAction; 
 export type AlertActions = ShowAlertAction | HideAlertAction;
 export type FriendsActions = SetPendingInvitationAction | SetFriends | SetOnlineUsers;
 export type ChatActions = SetChosenChatDetails | SetMessages | SetTyping | ResetChat;
-export type VideoChatActions = SetLocalStream | SetRemoteStream | SetCallRequest | SetCallStatus | ClearVideChatState | setOtherUserId | setScreenSharingStream;
+export type VideoChatActions = SetLocalStream | SetRemoteStream | SetCallRequest | SetCallStatus | 
+            ClearVideChatState | setOtherUserId | setScreenSharingStream | SetAudioOnly;

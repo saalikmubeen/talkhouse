@@ -1,7 +1,9 @@
 import { Dispatch } from "redux";
+import { ThunkAction } from "redux-thunk";
 import SimplePeer from "simple-peer";
-import { actionTypes, CallStatus } from "./types";
+import { actionTypes, CallStatus, ClearVideChatState } from "./types";
 import { showAlert } from "./alertActions";
+import { RootState } from "../store";
 
 export const setLocalStream = (stream: MediaStream | null) => {
     return {
@@ -51,13 +53,22 @@ export const setCallRequest = (
     };
 };
 
-export const clearVideoChat = (message: string) => {
-    return (dispatch: Dispatch) => {
+export const clearVideoChat = (
+    message: string
+): ThunkAction<void, RootState, unknown, ClearVideChatState> => {
+    return (dispatch, getState) => {
+        const {
+            videoChat: { localStream, screenSharingStream },
+        } = getState();
+
+        localStream?.getTracks().forEach((track) => track.stop());
+        screenSharingStream?.getTracks().forEach((track) => track.stop());
+
         dispatch({
             type: actionTypes.resetVideoChatState,
         });
 
-        dispatch(showAlert(message));
+        dispatch(showAlert(message) as any);
     };
 };
 
@@ -70,13 +81,21 @@ export const setOtherUserId = (otherUserId: string) => {
     };
 };
 
-
 export const setScreenSharingStream = (stream: MediaStream | null) => {
     return {
         type: actionTypes.setScreenSharingStream,
         payload: {
             stream,
-            isScreenSharing: !!stream 
+            isScreenSharing: !!stream,
         },
     };
-}
+};
+
+export const setAudioOnly = (audioOnly: boolean) => {
+    return {
+        type: actionTypes.setAudioOnly,
+        payload: {
+            audioOnly,
+        },
+    };
+};

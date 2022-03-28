@@ -62,8 +62,19 @@ const IncomingCall = () => {
               </Typography>
 
               <div>
+                  {/* {!callRequest?.audioOnly && (
+                      <IconButton
+                          color="success"
+                          onClick={() => {
+                              handleCall(true, false);
+                          }}
+                      >
+                          <VideocamIcon />
+                      </IconButton>
+                  )} */}
+
                   <IconButton
-                     color='success'
+                      color="success"
                       onClick={() => {
                           handleCall(true, false);
                       }}

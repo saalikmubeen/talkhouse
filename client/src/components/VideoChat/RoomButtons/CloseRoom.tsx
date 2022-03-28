@@ -9,11 +9,10 @@ import { notifyChatLeft } from "../../../socket/socketConnection";
 const CloseRoom = () => {
     const dispatch = useDispatch();
     const {
-        videoChat: { localStream, otherUserId },
+        videoChat: { otherUserId  },
     } = useAppSelector((state) => state);
 
     const handleLeaveRoom = () => {
-        localStream?.getTracks().forEach((track) => track.stop());
 
         // notify other user that I left the call
         if (otherUserId) {

@@ -79,6 +79,12 @@ const videoChatReducer: Reducer<VideoChatState, VideoChatActions> = (
                 screenSharingStream: action.payload.stream,
                 screenSharing: action.payload.isScreenSharing
             };
+
+        case actionTypes.setAudioOnly:
+            return {
+                ...state,
+                audioOnly: action.payload.audioOnly,
+            };
         
         default:
             return state;

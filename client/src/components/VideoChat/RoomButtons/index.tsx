@@ -28,10 +28,14 @@ const RoomButtons = () => {
 
     return (
         <MainContainer>
-            <ScreenShare videoChat={videoChat}/>
-            <Microphone  localStream={videoChat.localStream}/>
+            {!videoChat.audioOnly && (
+                <>
+                    <ScreenShare videoChat={videoChat} />
+                    <Camera localStream={videoChat.localStream} />
+                </>
+            )}
+            <Microphone localStream={videoChat.localStream} />
             <CloseRoom />
-            <Camera localStream={videoChat.localStream}/>
         </MainContainer>
     );
 };
