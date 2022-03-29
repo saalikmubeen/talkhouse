@@ -1,5 +1,6 @@
 import React from "react";
 import { styled } from "@mui/system";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import Camera from "./Camera";
 import Microphone from "./Microphone";
 import CloseRoom from "./CloseRoom";
@@ -18,16 +19,27 @@ const MainContainer = styled("div")({
     justifyContent: "center",
 });
 
-const RoomButtons = () => {
-    
-    const videoChat = useAppSelector(state => state.videoChat);
+const RoomButtons: React.FC<{
+    isRoomMinimized: boolean;
+}> = ({ isRoomMinimized }) => {
+    const videoChat = useAppSelector((state) => state.videoChat);
+    const matches = useMediaQuery("(max-width:800px)");
 
     if (!videoChat.localStream) {
         return null;
     }
 
     return (
-        <MainContainer>
+        <MainContainer
+            sx={{
+                ...(matches &&
+                    isRoomMinimized && {
+                        height: "100%",
+                        width: "15%",
+                        flexDirection: "column",
+                    }),
+            }}
+        >
             {!videoChat.audioOnly && (
                 <>
                     <ScreenShare videoChat={videoChat} />

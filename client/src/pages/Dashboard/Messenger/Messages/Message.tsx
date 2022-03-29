@@ -37,22 +37,32 @@ const Message = ({ content, sameAuthor, username, date, incomingMessage }: Messa
         return (
             <MainContainer>
                 <MessageContainer sx={{ marginLeft: "auto" }}>
-                    <div>
-
-                        <Typography sx={{ color: "#b9bbbe", textAlign: "right", marginBottom: "3px"}}>
-                            {new Date(date).toLocaleTimeString()}
-                        </Typography>
-
+                    <div
+                        style={{
+                            color: "white",
+                            backgroundColor: "#5865f2",
+                            borderRadius: "13px",
+                            padding: "8px 12px",
+                        }}
+                    >
                         <Typography
                             sx={{
                                 fontSize: "16px",
                                 color: "white",
-                                backgroundColor: "#5865f2",
-                                borderRadius: "13px",
-                                padding: "7px 10px",
+                                marginBottom: "2px",
                             }}
                         >
                             {content}
+                        </Typography>
+
+                        <Typography
+                            sx={{
+                                color: "#b9bbbe",
+                                textAlign: "right",
+                                fontSize: "10px",
+                            }}
+                        >
+                            {new Date(date).toLocaleTimeString()}
                         </Typography>
                     </div>
                 </MessageContainer>
@@ -72,26 +82,28 @@ const Message = ({ content, sameAuthor, username, date, incomingMessage }: Messa
             <MessageContainer
                 sx={{
                     marginLeft: sameAuthor ? "60px" : "0px",
+                    backgroundColor: "#fafafa",
+                    borderRadius: "13px",
+                    padding: "8px 12px",
                 }}
             >
                 <Typography
                     sx={{
-                        color: "#b9bbbe",
-                        marginBottom: "4px",
-                    }}
-                >
-                    {new Date(date).toLocaleTimeString()}
-                </Typography>
-                <Typography
-                    sx={{
                         fontSize: "16px",
                         color: "black",
-                        backgroundColor: "#fafafa",
-                        borderRadius: "13px",
-                        padding: "7px 10px",
+                        marginBottom: "2px",
                     }}
                 >
                     {content}
+                </Typography>
+
+                <Typography
+                    sx={{
+                        color: "#7f8183",
+                        fontSize: "10px",
+                    }}
+                >
+                    {new Date(date).toLocaleTimeString()}
                 </Typography>
             </MessageContainer>
         </MainContainer>

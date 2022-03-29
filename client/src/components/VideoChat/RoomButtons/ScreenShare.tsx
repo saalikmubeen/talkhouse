@@ -19,15 +19,16 @@ const ScreenShare: React.FC<{
 
         if (screenShareEnabled) {
 
-            // try{
-            //     currentPeerConnection?.replaceTrack(
-            //     currentPeerConnection.streams[0].getVideoTracks()[0],
-            //     videoChat.localStream?.getTracks()[0],
-            //     currentPeerConnection.streams[0]
-            // );
-            // }catch(err){
-            //     console.log(err);
-            // }
+            try{
+                currentPeerConnection?.replaceTrack(
+                    videoChat.screenSharingStream?.getVideoTracks()[0],
+                    currentPeerConnection.streams[0].getVideoTracks()[0],
+                    videoChat?.localStream
+                );
+            }catch(err){
+                console.log(err);
+            }
+
 
             videoChat.screenSharingStream?.getTracks().forEach((track) => track.stop());
             dispatch(setScreenSharingStream(null));
@@ -35,22 +36,27 @@ const ScreenShare: React.FC<{
 
         } else {
             const mediaDevices = navigator.mediaDevices as any;
-            const screenShareStream =
-                await mediaDevices.getDisplayMedia({
-                    video: true,
-                    audio: false,
-                });
+            const screenShareStream = await mediaDevices.getDisplayMedia({
+                video: true,
+                audio: false,
+            });
             dispatch(setScreenSharingStream(screenShareStream));
             setScreenShareEnabled(true);
 
             // replace outgoing local stream with screen share stream
-            currentPeerConnection?.replaceTrack(currentPeerConnection.streams[0].getVideoTracks()[0], screenShareStream.getTracks()[0], currentPeerConnection.streams[0]);
+            // replaceTrack (oldTrack, newTrack, oldStream);
+            currentPeerConnection?.replaceTrack(
+                currentPeerConnection.streams[0].getVideoTracks()[0],
+                screenShareStream.getTracks()[0],
+                currentPeerConnection.streams[0]
+            );
 
-            // const track = screenShareStream.getTracks()[0];
+            // const screenTrack = screenShareStream.getVideoTracks()[0];
 
-            // track.onended = function () {
-            //     currentPeerConnection.removeTrack(track, screenShareStream);
+            // screenTrack.onended = function () {
+            //     currentPeerConnection?.replaceTrack(screenTrack, videoChat.localStream?.getTracks()[0], currentPeerConnection.streams[0]);
             // };
+
         }
     };
 

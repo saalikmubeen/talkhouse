@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { styled } from "@mui/system";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import ResizeRoomButton from "./ResizeRoomButton";
 import VideosContainer from "./VideosContainer";
 import RoomButtons from "./RoomButtons";
@@ -14,6 +15,8 @@ const MainContainer = styled("div")({
     backgroundColor: "#202225",
     transition: "all 0.5s ease-in-out",
 });
+
+
 
 const fullScreenRoomStyle = {
     width: "100%",
@@ -35,12 +38,24 @@ const VideoChat = () => {
         setIsRoomMinimized(!isRoomMinimized);
     };
 
+    const matches = useMediaQuery("(max-width:800px)");
+
     return (
         <MainContainer
-            style={isRoomMinimized ? minimizedRoomStyle : fullScreenRoomStyle}
+            style={
+                isRoomMinimized
+                    ? { ...minimizedRoomStyle, ...(matches && {width: "70%"}) }
+                    : fullScreenRoomStyle
+            }
+            sx={{
+                ...(matches &&
+                    isRoomMinimized && {
+                        flexDirection: "row",
+                    }),
+            }}
         >
-            <VideosContainer />
-            <RoomButtons />
+            <VideosContainer isRoomMinimized={isRoomMinimized} />
+            <RoomButtons isRoomMinimized={isRoomMinimized} />
             <ResizeRoomButton
                 isRoomMinimized={isRoomMinimized}
                 handleRoomResize={roomResizeHandler}

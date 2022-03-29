@@ -2,7 +2,6 @@ import React, {useEffect} from 'react';
 import {useDispatch} from "react-redux";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { autoLogin } from './actions/authActions';
-import './App.css';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import Register from './pages/Register';

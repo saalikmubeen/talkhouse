@@ -3,6 +3,7 @@ import { styled } from "@mui/system";
 import Video from "./Video";
 import { useAppSelector } from "../../store" 
 import { Typography } from "@mui/material";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 const MainContainer = styled("div")({
     height: "85%",
@@ -11,10 +12,24 @@ const MainContainer = styled("div")({
     flexWrap: "wrap",
 });
 
-const VideosContainer = () => {
-    const {localStream, callStatus, remoteStream, screenSharingStream} = useAppSelector(state => state.videoChat);
+const VideosContainer: React.FC<{
+    isRoomMinimized: boolean;
+}> = ({
+    isRoomMinimized
+}) => {
+    const { localStream, callStatus, remoteStream, screenSharingStream } =
+        useAppSelector((state) => state.videoChat);
+
+    const matches = useMediaQuery("(max-width:800px)");
+
     return (
-        <MainContainer>
+        <MainContainer sx={{
+            ...(matches && isRoomMinimized && {
+                height: "100%",
+                width: "85%",
+                flexDirection: "column",
+            }),
+        }}>
             {localStream && (
                 <Video
                     stream={

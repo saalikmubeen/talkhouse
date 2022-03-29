@@ -1,5 +1,4 @@
 import React, { useRef} from "react";
-import {useDispatch} from 'react-redux';
 import { styled } from "@mui/system";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
@@ -7,9 +6,7 @@ import AddIcCallIcon from "@mui/icons-material/AddIcCall";
 import VideoCallIcon from "@mui/icons-material/VideoCall";
 import Avatar from "../../../../components/Avatar";
 import { useAppSelector } from "../../../../store";
-import { getLocalStreamPreview } from "../../../../socket/webRTC";
 import { callRequest } from "../../../../socket/socketConnection";
-import { setCallStatus } from "../../../../actions/videoChatActions";
 
 const MainContainer = styled("div")({
     width: "100%",
@@ -45,7 +42,6 @@ const MessagesHeader: React.FC<{
     scrollPosition: number;
 }> = ({scrollPosition}) => {
 
-    const dispatch = useDispatch();
     const navRef = useRef<HTMLDivElement>(null);
     let navPosition = navRef.current?.getBoundingClientRect().top;
 
@@ -76,9 +72,6 @@ const MessagesHeader: React.FC<{
                 <IconButton
                     style={{ color: "white" }}
                     onClick={() => {
-                        // getLocalStreamPreview(true, () => {
-                        //     dispatch(setCallStatus("ringing"))
-                        // });
                         callRequest({
                             audioOnly: true,
                             callerName: "token" in userDetails ? userDetails.username : "",
@@ -92,7 +85,6 @@ const MessagesHeader: React.FC<{
                 <IconButton
                     style={{ color: "white" }}
                     onClick={() => {
-                        // getLocalStreamPreview(false);
                         callRequest({
                             audioOnly: false,
                             callerName:
@@ -102,7 +94,6 @@ const MessagesHeader: React.FC<{
                             receiverUserId: chosenChatDetails?.userId!,
                         });
 
-                        // dispatch(setCallStatus("ringing"));
                     }}
                 >
                     <VideoCallIcon />

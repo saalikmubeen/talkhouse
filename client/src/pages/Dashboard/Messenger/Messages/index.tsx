@@ -67,6 +67,7 @@ const Messages = () => {
                 sx={{
                     color: "#b9bbbe",
                     marginTop: "15px",
+                    fontSize: "13px",
                 }}
             >
                 This is the beginning of your conversation with {chat.chosenChatDetails?.username}

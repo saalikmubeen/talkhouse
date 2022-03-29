@@ -7,14 +7,15 @@ const Separator = styled("div")({
     height: "1px",
     position: "relative",
     marginTop: "20px",
-    marginBottom: "10px",
+    marginBottom: "15px",
 });
 
 const DateLabel = styled("span")({
     backgroundColor: "#36393f",
     position: "absolute",
-    left: "45%",
-    top: "-10px",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
     color: "#b9bbbe",
     padding: "0 5px",
     fontSize: "14px",
