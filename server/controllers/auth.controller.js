@@ -43,7 +43,7 @@ const register = async (req, res) => {
                 _id: user._id,
                 email: user.email,
                 token: token,
-                username: user.username,
+                username: user.username, 
             },
         });
     } catch (err) {

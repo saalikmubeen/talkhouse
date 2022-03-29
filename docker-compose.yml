@@ -1,0 +1,46 @@
+version: "3.9"
+services:
+
+    # Backend AI
+    api:
+        container_name: api
+        build:
+            context: ./server
+            dockerfile: Dockerfile.dev
+        restart: always # "no", always, on-failure, unless-stopped
+        working_dir: /app
+        volumes:
+            - ./server:/app
+            - /app/node_modules
+        ports:
+            - "5000:5000"
+        environment:
+            MONGO_URI_DEV: mongodb://root:exapmle@mongo-db:27017/ta;lkhouse?authSource=admin
+            MONGO_URI: <PRODUCTION_MONGO_URI>
+            JWT_SECRET: secret
+        depends_on:
+            - mongo-db
+
+    # MongoDB database
+    mongo-db:
+        container_name: mongo-db
+        image: "mongo"
+        restart: always
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: exapmle
+        ports:
+            - 27017:27017
+
+
+    # client
+    client:
+        container_name: client
+        build:
+            context: ./client
+            dockerfile: Dockerfile.dev
+        volumes:
+            - ./client:/app
+            - /app/node_modules
+        ports:
+            - "3000:3000"

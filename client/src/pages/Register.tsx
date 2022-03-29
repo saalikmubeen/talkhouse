@@ -93,7 +93,7 @@ const Register = () => {
                 <Label>Username</Label>
                 <Input
                     type="email"
-                    placeholder="Enter your email"
+                    placeholder="Enter your username"
                     name="username"
                     value={credentials.username}
                     onChange={handleChange}
