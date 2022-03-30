@@ -4,6 +4,7 @@ import SimplePeer from "simple-peer";
 import { actionTypes, CallStatus, ClearVideChatState } from "./types";
 import { showAlert } from "./alertActions";
 import { RootState } from "../store";
+import { currentPeerConnection, setCurrentPeerConnection } from "../socket/socketConnection";
 
 export const setLocalStream = (stream: MediaStream | null) => {
     return {
@@ -57,12 +58,21 @@ export const clearVideoChat = (
     message: string
 ): ThunkAction<void, RootState, unknown, ClearVideChatState> => {
     return (dispatch, getState) => {
+
         const {
             videoChat: { localStream, screenSharingStream },
         } = getState();
 
         localStream?.getTracks().forEach((track) => track.stop());
         screenSharingStream?.getTracks().forEach((track) => track.stop());
+
+        // destroy the active peer connection with the other user that was established
+        // if (currentPeerConnection) {
+        //     currentPeerConnection.destroy();
+        //     console.log("DESTROYED PEER CONNECTION");
+        // }
+
+        // setCurrentPeerConnection(null);
 
         dispatch({
             type: actionTypes.resetVideoChatState,

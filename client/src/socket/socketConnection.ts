@@ -97,6 +97,10 @@ interface ClientToServerEvents {
 
 let currentPeerConnection: any = null;
 
+const setCurrentPeerConnection = (peerConnection: any) => {
+    currentPeerConnection = peerConnection;
+}
+
 let socket: Socket<ServerToClientEvents, ClientToServerEvents>;
 
 const SERVER_URL = "http://localhost:5000";
@@ -153,14 +157,6 @@ const connectWithSocketServer = (userDetails: UserDetails) => {
 
     socket.on("notify-typing", (data) => {
         
-        // const receiverId = store.getState().chat.chosenChatDetails
-        //     ?.userId as string;
-        
-        // if (data.senderUserId === receiverId) {
-        //     store.dispatch(setTyping(data.typing) as any);
-        // }
-
-
         store.dispatch(setTyping({typing: data.typing, userId: data.senderUserId}) as any);
     });
 
@@ -169,11 +165,6 @@ const connectWithSocketServer = (userDetails: UserDetails) => {
         console.log(data);
         store.dispatch(setCallRequest(data) as any);
     })
-
-    // socket.on("call-response", (data) => {
-    //     const status = data.accepted ? "accepted" : "rejected";
-    //     store.dispatch(setCallStatus(status) as any);
-    // })
 
 
     socket.on("notify-chat-left", () => {
@@ -300,4 +291,4 @@ const notifyChatLeft = (receiverUserId: string) => {
 
 }
 
-export { connectWithSocketServer, sendDirectMessage, fetchDirectChatHistory, notifyTyping, callRequest, callResponse, notifyChatLeft, currentPeerConnection };
+export { connectWithSocketServer, sendDirectMessage, fetchDirectChatHistory, notifyTyping, callRequest, callResponse, notifyChatLeft, currentPeerConnection, setCurrentPeerConnection };

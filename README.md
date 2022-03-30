@@ -12,7 +12,7 @@ WebRTC based peer to peer video calling and messaging web app build with MERN st
 - **`MongoDB`** for persistance of data
 - **`Material UI`** for creating ui
 - **`Redux`** for state management
-- **`Typescript`** for type safety, cure for headace you get when props are flowing all over the app with no hint 
+- **`Typescript`** for type safety, cure for headache you get when props are flowing all over the app with no hint 
 
 
 # Features
