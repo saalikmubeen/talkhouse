@@ -25,6 +25,7 @@ WebRTC based peer to peer video calling and messaging web app build with MERN st
 * Online indicator
 * Notify on typing
 * Sceen sharing 
+* Accept and reject an incoming call
 
 **and more....**
 
@@ -81,7 +82,7 @@ docker-compose up --build
 
 - [ ]  Enable group vdeo and messaging functionality
 - [ ]  Implement confirm email, reset password and email sending on friend invitation, *Not a big deal to implement, just a little lazy to implement it*
-- [ ]  Allow end to end encryption of messages
+- [ ]  Store messages in an encrypted form in the database
 - [ ]  Enhace the UI. I hate CSS, not that good at it 🥱😓
 
 
