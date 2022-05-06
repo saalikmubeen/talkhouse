@@ -80,7 +80,7 @@ docker-compose up --build
 
  # TODOS
 
-- [ ]  Enable group vdeo and messaging functionality
+- [ ]  Enable group video and messaging functionality
 - [ ]  Implement confirm email, reset password and email sending on friend invitation, *Not a big deal to implement, just a little lazy to implement it*
 - [ ]  Store messages in an encrypted form in the database
 - [ ]  Enhace the UI. I hate CSS, not that good at it 🥱😓
