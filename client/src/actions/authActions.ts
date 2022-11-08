@@ -1,8 +1,8 @@
 import { Dispatch,  } from "redux";
-import {login, register} from "../api/api";
+import { login, register, getMe } from "../api/api";
 import { LoginArgs, RegisterArgs } from "../api/types";
 import { showAlert } from "./alertActions";
-import {actionTypes} from "./types";
+import {actionTypes, CurrentUser} from "./types";
 
 
 export const loginUser = (credentials: LoginArgs) => {
@@ -59,15 +59,28 @@ export const registerUser = (credentials: RegisterArgs) => {
 
 export const autoLogin = () => {
     return async (dispatch: Dispatch) => {
-        const currentUser = JSON.parse(
+        const currentUser: CurrentUser = JSON.parse(
             localStorage.getItem("currentUser") || "{}"
         );
 
-        if (currentUser.token) {
-            dispatch({
-                type: actionTypes.authenticate,
-                payload: currentUser,
-            });
+        const response = await getMe();
+
+        // token has expired
+        if (response.statusCode === 401 || response.statusCode === 403) {
+            localStorage.clear();
+
+        } else {
+
+            if (currentUser.token) {
+                dispatch({
+                    type: actionTypes.authenticate,
+                    payload: {
+                        ...response.me,
+                        token: currentUser.token,
+                    },
+                });
+            }
+
         }
 
     }

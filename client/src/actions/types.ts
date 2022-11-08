@@ -31,6 +31,12 @@ export enum actionTypes {
 }
 
 
+export interface CurrentUser {
+    _id: string;
+    email: string;
+    token: string;
+    username: string;
+}
 interface AuthSuccessAction {
     type: actionTypes.authenticate;
     payload: {

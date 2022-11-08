@@ -31,6 +31,20 @@ router.post(
     login
 );
 
+router.get(
+    "/me",
+    requireAuth,
+    (req, res) => {
+        res.status(200).json({
+            me: {
+                _id: req.user.userId,
+                email: req.user.email,
+                username: req.user.username
+            },
+        });
+    }
+);
+
 // test route for requireAuth middleware
 router.get("/test", requireAuth, (req, res) => {
     res.send(`Hello, ${req.user.email}`);

@@ -81,6 +81,7 @@ const login = async (req, res) => {
             process.env.JWT_SECRET,
             {
                 expiresIn: "15d",
+                // expiresIn: 60,
             }
         );
 

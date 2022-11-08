@@ -13,12 +13,19 @@ export type inviteFriendArgs = {
     email: string;
 }
 
-
 export type AuthResponse = {
     userDetails: {
         _id: string;
         email: string;
         token: string;
+        username: string;
+    };
+};
+
+export type GetMeResponse = {
+    me: {
+        _id: string;
+        email: string;
         username: string;
     };
 };

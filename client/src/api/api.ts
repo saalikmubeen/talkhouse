@@ -4,6 +4,7 @@ import {
     AuthResponse,
     RegisterArgs,
     inviteFriendArgs,
+    GetMeResponse,
 } from "./types";
 
 const BASE_URL = "http://localhost:5000"; 
@@ -79,6 +80,24 @@ export const register = async ({ email, password, username }: RegisterArgs) => {
 };
 
 // protected routes
+
+export const getMe = async () => {
+    try {
+        const res = await api.get<GetMeResponse>("/api/auth/me");
+
+        return {
+            me: res.data.me,
+            statusCode: 200
+        };
+
+    } catch (err: any) {
+        return {
+            error: true,
+            message: err.response.data,
+            statusCode: err?.response?.status,
+        };
+    }
+};
 
 export const inviteFriendRequest = async ({ email }: inviteFriendArgs) => {
     try {
