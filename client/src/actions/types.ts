@@ -20,6 +20,7 @@ export enum actionTypes {
     resetChat,
     
     setTyping,
+    setInitialTypingStatus,
 
     setLocalStream,
     setRemoteStream,
@@ -134,6 +135,11 @@ export interface Message {
     createdAt: string;
 }
 
+export interface Typing {
+    typing: boolean;
+    userId: string;
+}
+
 export interface SetMessages {
     type: actionTypes.setMessages;
     payload: Array<Message>;
@@ -150,6 +156,11 @@ export interface SetTyping {
         typing: boolean;
         userId: string;
     };
+}
+
+export interface SetInitialTypingStatus {
+    type: actionTypes.setInitialTypingStatus;
+    payload: Array<Typing>;
 }
 
 interface SetLocalStream {
@@ -209,6 +220,6 @@ interface SetAudioOnly {
 export type AuthActions = AuthSuccessAction | AuthErrorAction | LogoutAction | AuthLoadingAction; 
 export type AlertActions = ShowAlertAction | HideAlertAction;
 export type FriendsActions = SetPendingInvitationAction | SetFriends | SetOnlineUsers;
-export type ChatActions = SetChosenChatDetails | SetMessages | AddNewMessage | SetTyping | ResetChat;
+export type ChatActions = SetChosenChatDetails | SetMessages | AddNewMessage | SetTyping | SetInitialTypingStatus | ResetChat;
 export type VideoChatActions = SetLocalStream | SetRemoteStream | SetCallRequest | SetCallStatus | 
             ClearVideChatState | setOtherUserId | setScreenSharingStream | SetAudioOnly;

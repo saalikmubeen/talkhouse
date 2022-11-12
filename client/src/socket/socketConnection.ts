@@ -1,6 +1,6 @@
 import { io, Socket } from "socket.io-client";
 import { setFriends, setOnlineUsers, setPendingInvitations } from "../actions/friendActions";
-import {addNewMessage, setMessages, setTyping} from "../actions/chatActions";
+import {addNewMessage, setInitialTypingStatus, setMessages, setTyping} from "../actions/chatActions";
 import { Message } from "../actions/types";
 import { store } from "../store";
 import { setCallRequest, setCallStatus, setOtherUserId, setRemoteStream, clearVideoChat, setAudioOnly } from "../actions/videoChatActions";
@@ -134,7 +134,16 @@ const connectWithSocketServer = (userDetails: UserDetails) => {
 
 
     socket.on("friends-list", (data) => {
+        const typingStatusOfFriends = data.map((friend) => {
+            return {
+                userId: friend.id,
+                typing: false
+            }
+        })
+
+        store.dispatch(setInitialTypingStatus(typingStatusOfFriends))
         store.dispatch(setFriends(data) as any);
+
     });
 
     socket.on("online-users", (data) => {
@@ -143,16 +152,12 @@ const connectWithSocketServer = (userDetails: UserDetails) => {
 
 
     socket.on("direct-chat-history", (data) => {
-        // store.dispatch(setMessages(data.messages) as any);
-
         const { messages, participants } = data;
-        // console.log("Hello");
 
         const receiverId = store.getState().chat.chosenChatDetails?.userId as string;
         const senderId = (store.getState().auth.userDetails as any)._id;
 
         // only update the store with messages if the participant is the one we are currently chatting with
-
         const isActive = participants.includes(receiverId) && participants.includes(senderId);
 
         if (isActive) {
@@ -163,7 +168,6 @@ const connectWithSocketServer = (userDetails: UserDetails) => {
 
     socket.on("direct-message", (data) => {
         const { newMessage, participants } = data;
-        console.log(newMessage)
 
         const receiverId = store.getState().chat.chosenChatDetails
             ?.userId as string;
@@ -179,7 +183,6 @@ const connectWithSocketServer = (userDetails: UserDetails) => {
     })
 
     socket.on("notify-typing", (data) => {
-        // console.log(data)
         
         store.dispatch(setTyping({typing: data.typing, userId: data.senderUserId}) as any);
     });

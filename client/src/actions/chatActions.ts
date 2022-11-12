@@ -1,5 +1,5 @@
 // import { Dispatch } from "redux";
-import { actionTypes, SetChosenChatDetails, SetMessages, Message, SetTyping, AddNewMessage } from "./types";
+import { actionTypes, SetChosenChatDetails, SetMessages, Message, SetTyping, AddNewMessage, SetInitialTypingStatus, Typing } from "./types";
 
 export const setChosenChatDetails = (chatDetails: {
     userId: string;
@@ -27,9 +27,16 @@ export const addNewMessage = (message: Message): AddNewMessage => {
 };
 
 
-export const setTyping = (typing: {userId: string, typing: boolean}): SetTyping => {
+export const setTyping = (typing: Typing): SetTyping => {
     return {
         type: actionTypes.setTyping,
         payload: typing
+    };
+};
+
+export const setInitialTypingStatus = (typing: Array<Typing>): SetInitialTypingStatus => {
+    return {
+        type: actionTypes.setInitialTypingStatus,
+        payload: typing,
     };
 };

@@ -27,14 +27,14 @@ const FriendsListItem = ({
     const matches = useMediaQuery(theme.breakpoints.up("sm"));
     const dispatch = useDispatch();
 
-    const { chosenChatDetails } = useAppSelector((state) => state.chat);
+    const { chosenChatDetails, typing } = useAppSelector((state) => state.chat);
 
-    // if this friend is same as the person/user typing and this friend is not the one 
+    const isTyping = typing.find((item) => item.userId === id);
+
+    // if this friend is same as the person/user typing and this friend is not the one
     // we are currently chatting with(i.e, chosenChatDetails.userId)
     const isFriendTyping =
-        chosenChatDetails?.typing.typing &&
-        chosenChatDetails.userId !== id &&
-        id === chosenChatDetails.typing.userId;
+        isTyping && isTyping.typing && id !== chosenChatDetails?.userId;
 
     const isChatActive = chosenChatDetails?.userId === id;
 
