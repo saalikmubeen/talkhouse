@@ -1,14 +1,9 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { styled } from "@mui/system";
-import SideBar from "./SideBar/SideBar";
-import FriendsSideBar from "./FriendsSideBar/FriendsSideBar";
-import Messenger from "./Messenger/Messenger";
-import AppBar from "./AppBar/AppBar";
 import { connectWithSocketServer, UserDetails } from "../../socket/socketConnection";
 import { useAppSelector } from "../../store";
-import VideoChat from "../../components/VideoChat";
-import IncomingCall from "../../components/IncomingCall"
+import ResponsiveDrawer from "./Drawer";
 
 const Wrapper = styled("div")({
     width: "100%",
@@ -35,12 +30,7 @@ const Dashboard = () => {
 
     return (
         <Wrapper>
-            <SideBar />
-            <FriendsSideBar />
-            <Messenger />
-            <AppBar />
-            {localStream && <VideoChat />}
-            <IncomingCall/>
+            <ResponsiveDrawer localStream={localStream}/>
         </Wrapper>
     );
 };

@@ -7,7 +7,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { logoutUser } from "../../../actions/authActions";
 import { useAppSelector } from "../../../store";
 
-export default function BasicMenu() {
+export default function DropDownMenu() {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const dispatch = useDispatch();

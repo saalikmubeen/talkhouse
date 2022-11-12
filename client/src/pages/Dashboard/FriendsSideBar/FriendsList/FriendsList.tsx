@@ -24,6 +24,7 @@ const DUMMY_FRIENDS = [
 const MainContainer = styled("div")({
   flexGrow: 1,
   width: "100%",
+  margin: "20px 0"
 });
 
 const FriendsList = () => {

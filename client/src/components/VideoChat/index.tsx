@@ -16,8 +16,6 @@ const MainContainer = styled("div")({
     transition: "all 0.5s ease-in-out",
 });
 
-
-
 const fullScreenRoomStyle = {
     width: "100%",
     height: "100vh",
@@ -44,7 +42,10 @@ const VideoChat = () => {
         <MainContainer
             style={
                 isRoomMinimized
-                    ? { ...minimizedRoomStyle, ...(matches && {width: "70%"}) }
+                    ? {
+                          ...minimizedRoomStyle,
+                          ...(matches && { width: "70%" }),
+                      }
                     : fullScreenRoomStyle
             }
             sx={{
@@ -55,8 +56,7 @@ const VideoChat = () => {
             }}
         >
             <VideosContainer isRoomMinimized={isRoomMinimized} />
-            <RoomButtons isRoomMinimized={isRoomMinimized} />
-            <ResizeRoomButton
+            <RoomButtons
                 isRoomMinimized={isRoomMinimized}
                 handleRoomResize={roomResizeHandler}
             />

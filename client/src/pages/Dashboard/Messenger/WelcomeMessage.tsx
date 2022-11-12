@@ -10,6 +10,8 @@ const Wrapper = styled("div")({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
+    padding: "16px",
+    textAlign: "center"
 });
 
 const WelcomeMessage = () => {

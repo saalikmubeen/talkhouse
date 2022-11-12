@@ -6,6 +6,7 @@ import Microphone from "./Microphone";
 import CloseRoom from "./CloseRoom";
 import ScreenShare from "./ScreenShare";
 import {useAppSelector} from "../../../store"
+import ResizeRoomButton from "../ResizeRoomButton";
 
 
 const MainContainer = styled("div")({
@@ -21,7 +22,8 @@ const MainContainer = styled("div")({
 
 const RoomButtons: React.FC<{
     isRoomMinimized: boolean;
-}> = ({ isRoomMinimized }) => {
+    handleRoomResize: () => void;
+}> = ({ isRoomMinimized, handleRoomResize }) => {
     const videoChat = useAppSelector((state) => state.videoChat);
     const matches = useMediaQuery("(max-width:800px)");
 
@@ -48,6 +50,10 @@ const RoomButtons: React.FC<{
             )}
             <Microphone localStream={videoChat.localStream} />
             <CloseRoom />
+            <ResizeRoomButton
+                isRoomMinimized={isRoomMinimized}
+                handleRoomResize={handleRoomResize}
+            />
         </MainContainer>
     );
 };

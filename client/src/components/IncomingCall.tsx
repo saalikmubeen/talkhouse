@@ -54,15 +54,16 @@ const IncomingCall = () => {
                   sx={{
                       color: "black",
                       marginBottom: "3px",
-                      fontSize: "20px",
+                      fontSize: "16px",
                       fontWeight: "bold",
                   }}
               >
-                  Incoming Call from {callRequest?.callerName}
+                  Incoming {callRequest?.audioOnly ? "audio" : "video"} call from{" "}
+                  {callRequest?.callerName}
               </Typography>
 
               <div>
-                  {/* {!callRequest?.audioOnly && (
+                  {!callRequest?.audioOnly && (
                       <IconButton
                           color="success"
                           onClick={() => {
@@ -71,16 +72,16 @@ const IncomingCall = () => {
                       >
                           <VideocamIcon />
                       </IconButton>
-                  )} */}
+                  )}
 
-                  <IconButton
+                  {/* <IconButton
                       color="success"
                       onClick={() => {
                           handleCall(true, false);
                       }}
                   >
                       <VideocamIcon />
-                  </IconButton>
+                  </IconButton> */}
 
                   <IconButton
                       color="success"

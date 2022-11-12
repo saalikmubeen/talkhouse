@@ -43,10 +43,12 @@ const VideosContainer: React.FC<{
                 <Typography
                     sx={{
                         color: "#b9bbbe",
-                        fontSize: "25px",
+                        fontSize: "15px",
                         fontWeight: "bold",
-                        textAlign: "center",
                         width: "100%",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center"
                     }}
                 >
                     {callStatus === "ringing"

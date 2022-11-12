@@ -12,8 +12,7 @@ const MainContainer = styled("div")({
     width: "100%",
     display: "flex",
     alignItems: "center",
-    justifyContent: "space-between",
-    // marginTop: "10px",
+    justifyContent: "flex-end",
     position: "sticky",
     top: "0px",
     right: "0px",
@@ -53,7 +52,7 @@ const MessagesHeader: React.FC<{
 
     return (
         <MainContainer style={navActiveStyle} ref={navRef}>
-            <NameWrapper>
+            {/* <NameWrapper>
                 <Avatar username={chosenChatDetails?.username!} />
                 <Typography
                     variant="h4"
@@ -66,7 +65,7 @@ const MessagesHeader: React.FC<{
                 >
                     {chosenChatDetails?.username}
                 </Typography>
-            </NameWrapper>
+            </NameWrapper> */}
 
             <CallButtons>
                 <IconButton

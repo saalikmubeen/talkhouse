@@ -5,9 +5,9 @@ import CloseFullscreenIcon from "@mui/icons-material/CloseFullscreen";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 
 const MainContainer = styled("div")({
-    position: "absolute",
-    top: "10px",
-    left: "10px",
+    // position: "absolute",
+    // top: "20px",
+    // right: "20px",
 });
 
 
