@@ -76,7 +76,7 @@ export default function ResponsiveDrawer(props: Props) {
                     position: "fixed",
                     top: 10,
                     left: 17,
-                    zIndex: 10000,
+                    zIndex: 1000,
                     color: "white",
                 }}
                 aria-label="open drawer"
@@ -134,6 +134,7 @@ export default function ResponsiveDrawer(props: Props) {
                         xs: `calc(100vw)`,
                         sm: `calc(100vw - ${drawerWidth}px)`,
                     },
+
                 }}
             >
                 <Messenger />

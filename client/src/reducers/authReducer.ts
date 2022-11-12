@@ -3,6 +3,7 @@ const initialState = {
     userDetails:  {},
     error: false,
     errorMessage: "",
+    loading: false
 }
 
 
@@ -14,7 +15,8 @@ interface AuthState {
         username: string
     } | {},
     error: boolean;
-    errorMessage: string
+    errorMessage: string,
+    loading: boolean
 }
 
 const authReducer = (state=initialState, action: AuthActions): AuthState => {
@@ -24,7 +26,8 @@ const authReducer = (state=initialState, action: AuthActions): AuthState => {
             return {
                 error: false,
                 errorMessage: "",
-                userDetails: action.payload
+                userDetails: action.payload,
+                loading: false
             }
         
         case actionTypes.authError:
@@ -32,14 +35,23 @@ const authReducer = (state=initialState, action: AuthActions): AuthState => {
                 ...state,
                 error: true,
                 errorMessage: action.payload,
+                loading: false
             }
 
         case actionTypes.logout:
             return {
                 error: false,
                 errorMessage: "",
-                userDetails: {}
+                userDetails: {},
+                loading: false
             }
+        case actionTypes.authLoading:
+            return {
+                error: false,
+                errorMessage: "",
+                userDetails: {},
+                loading: action.payload,
+            };
         
         default:
             return state

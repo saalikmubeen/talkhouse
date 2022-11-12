@@ -1,6 +1,6 @@
 import { io, Socket } from "socket.io-client";
 import { setFriends, setOnlineUsers, setPendingInvitations } from "../actions/friendActions";
-import {setMessages, setTyping} from "../actions/chatActions";
+import {addNewMessage, setMessages, setTyping} from "../actions/chatActions";
 import { Message } from "../actions/types";
 import { store } from "../store";
 import { setCallRequest, setCallStatus, setOtherUserId, setRemoteStream, clearVideoChat, setAudioOnly } from "../actions/videoChatActions";
@@ -41,6 +41,11 @@ interface ServerToClientEvents {
 
     "direct-chat-history": (data: {
         messages: Array<Message>;
+        participants: Array<string>;
+    }) => void;
+
+    "direct-message": (data: {
+        newMessage: Message;
         participants: Array<string>;
     }) => void;
 
@@ -141,7 +146,7 @@ const connectWithSocketServer = (userDetails: UserDetails) => {
         // store.dispatch(setMessages(data.messages) as any);
 
         const { messages, participants } = data;
-        console.log(participants);
+        // console.log("Hello");
 
         const receiverId = store.getState().chat.chosenChatDetails?.userId as string;
         const senderId = (store.getState().auth.userDetails as any)._id;
@@ -156,7 +161,25 @@ const connectWithSocketServer = (userDetails: UserDetails) => {
 
     })
 
+    socket.on("direct-message", (data) => {
+        const { newMessage, participants } = data;
+        console.log(newMessage)
+
+        const receiverId = store.getState().chat.chosenChatDetails
+            ?.userId as string;
+        const senderId = (store.getState().auth.userDetails as any)._id;
+
+         const isActive =
+             participants.includes(receiverId) &&
+             participants.includes(senderId);
+
+        if (isActive) {
+            store.dispatch(addNewMessage(newMessage) as any);
+        }
+    })
+
     socket.on("notify-typing", (data) => {
+        // console.log(data)
         
         store.dispatch(setTyping({typing: data.typing, userId: data.senderUserId}) as any);
     });

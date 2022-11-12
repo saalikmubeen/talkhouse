@@ -4,6 +4,7 @@ export enum actionTypes {
     authenticate,
     logout,
     authError,
+    authLoading,
 
     showAlert,
     hideAlert,
@@ -15,6 +16,7 @@ export enum actionTypes {
     setChatType,
     setChosenChatDetails,
     setMessages,
+    addNewMessage,
     resetChat,
     
     setTyping,
@@ -54,6 +56,11 @@ interface AuthErrorAction {
 
 interface LogoutAction {
     type: actionTypes.logout;
+}
+
+interface AuthLoadingAction {
+    type: actionTypes.authLoading;
+    payload: boolean;
 }
 
 interface ShowAlertAction {
@@ -132,6 +139,11 @@ export interface SetMessages {
     payload: Array<Message>;
 }
 
+export interface AddNewMessage {
+    type: actionTypes.addNewMessage;
+    payload: Message;
+}
+
 export interface SetTyping {
     type: actionTypes.setTyping;
     payload: {
@@ -194,9 +206,9 @@ interface SetAudioOnly {
     }
 }
 
-export type AuthActions = AuthSuccessAction | AuthErrorAction | LogoutAction; 
+export type AuthActions = AuthSuccessAction | AuthErrorAction | LogoutAction | AuthLoadingAction; 
 export type AlertActions = ShowAlertAction | HideAlertAction;
 export type FriendsActions = SetPendingInvitationAction | SetFriends | SetOnlineUsers;
-export type ChatActions = SetChosenChatDetails | SetMessages | SetTyping | ResetChat;
+export type ChatActions = SetChosenChatDetails | SetMessages | AddNewMessage | SetTyping | ResetChat;
 export type VideoChatActions = SetLocalStream | SetRemoteStream | SetCallRequest | SetCallStatus | 
             ClearVideChatState | setOtherUserId | setScreenSharingStream | SetAudioOnly;

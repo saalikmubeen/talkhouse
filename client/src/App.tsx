@@ -6,18 +6,25 @@ import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import AlertNotification from "./components/AlertNotification"
+import { useAppSelector } from './store';
+import Loading from './components/Loading';
 
 function App() {
 
     const dispatch = useDispatch();
-
-    
+    const { loading } = useAppSelector(
+        (state) => state.auth
+    ); 
 
   // auto login
   useEffect(() => {
     dispatch(autoLogin());
   }, [dispatch])
   
+
+  if(loading) {
+    return <Loading />
+  }
   return (
       <>
           <BrowserRouter>

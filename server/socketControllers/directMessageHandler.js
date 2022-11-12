@@ -1,6 +1,6 @@
 const Conversation = require("../models/Conversation");
 const Message = require("../models/Message");
-const { updateChatHistory } = require("./notifyConnectedSockets");
+const { updateChatHistory, sendNewMessage } = require("./notifyConnectedSockets");
 
 const directMessageHandler = async (socket, data) => {
     try {
@@ -23,16 +23,18 @@ const directMessageHandler = async (socket, data) => {
 
         // if conversation exists, append the message to the conversation 
         if (conversation) {
-            console.log('conversation already exists');
-            
+            console.log("conversation already exists");
+
             conversation.messages = [...conversation.messages, newMessage._id];
             await conversation.save();
 
             // update the chat history of the participants
-            updateChatHistory(conversation._id.toString());
+            // updateChatHistory(conversation._id.toString());
 
+            // update the chat of the participants with newly sent message 
+            sendNewMessage(conversation._id.toString(), newMessage);
         } else {
-            console.log("creating new conversation")
+            console.log("creating new conversation");
             // create conversation
             const newConversation = await Conversation.create({
                 participants: [senderUserId, receiverUserId],
@@ -40,7 +42,10 @@ const directMessageHandler = async (socket, data) => {
             });
 
             // update the chat history of the participants
-            updateChatHistory(newConversation._id.toString());
+            // updateChatHistory(newConversation._id.toString());
+
+            // update the chat of the participants with newly sent message
+            sendNewMessage(newConversation._id.toString(), newMessage);
         }
 
 

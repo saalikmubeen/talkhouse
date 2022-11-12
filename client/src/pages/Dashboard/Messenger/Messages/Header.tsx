@@ -17,7 +17,7 @@ const MainContainer = styled("div")({
     top: "0px",
     right: "0px",
     padding: "13px",
-    borderRadius: "0px 0px 40px 40px",
+    borderRadius: "0px 0px 30px 30px",
     zIndex: "20",
     transition: "all 0.3s ease-in",
 });

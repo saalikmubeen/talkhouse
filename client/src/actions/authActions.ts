@@ -59,6 +59,12 @@ export const registerUser = (credentials: RegisterArgs) => {
 
 export const autoLogin = () => {
     return async (dispatch: Dispatch) => {
+
+        dispatch({
+            type: actionTypes.authLoading,
+            payload: true,
+        });
+
         const currentUser: CurrentUser = JSON.parse(
             localStorage.getItem("currentUser") || "{}"
         );
@@ -68,6 +74,10 @@ export const autoLogin = () => {
         // token has expired
         if (response.statusCode === 401 || response.statusCode === 403) {
             localStorage.clear();
+            dispatch({
+                type: actionTypes.authLoading,
+                payload: false,
+            });
 
         } else {
 

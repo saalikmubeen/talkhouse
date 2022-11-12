@@ -63,6 +63,12 @@ const chatReducer: Reducer<ChatState, ChatActions> = (
                 ...state,
                 messages: action.payload
             }
+        
+        case actionTypes.addNewMessage:
+            return {
+                ...state,
+                messages: [...state.messages, action.payload]
+            }
 
         case actionTypes.setTyping:
             return {

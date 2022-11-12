@@ -50,11 +50,9 @@ const NewMessageInput = () => {
 
 
     useEffect(() => {
-
         // notify the receiverUser that the user(sender) is typing
         notifyTyping({ receiverUserId: chatDetails?.userId!, typing: focused });
-
-    }, [focused]);
+    }, [focused, chatDetails?.userId]);
 
     return (
         <MainContainer>

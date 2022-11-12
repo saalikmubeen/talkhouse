@@ -109,8 +109,52 @@ const updateChatHistory = async (conversationId, toSpecificSocketId=null) => {
 }
 
 
+const sendNewMessage = async (conversationId, newMessage) => {
+    // get the conversation
+    const conversation = await Conversation.findById(conversationId);
+
+    const messageAuthor = await User.findById(newMessage.author);
+
+    if (!messageAuthor || !conversation) {
+        return;
+    }
+
+    const message = {
+        __v: newMessage.__v,
+        _id: newMessage._id,
+        content: newMessage.content,
+        createdAt: newMessage.createdAt,
+        updatedAt: newMessage.updatedAt,
+        type: newMessage.type,
+        author: {
+            _id: messageAuthor._id,
+            username: messageAuthor.username,
+        },
+    };
+
+    const io = getServerSocketInstance();
+
+
+    // get the participant's active socket connections(socket ids)
+    conversation.participants.forEach((participantId) => {
+        const activeConnections = getActiveConnections(
+            participantId.toString()
+        );
+
+        // send the new massage to all the active connections of this user(participantId)
+        activeConnections.forEach((socketId) => {
+            io.to(socketId).emit("direct-message", {
+                newMessage: message,
+                participants: conversation.participants,
+            });
+        });
+    });
+};
+
+
 module.exports = {
     updateUsersInvitations,
     updateUsersFriendsList,
-    updateChatHistory
+    updateChatHistory,
+    sendNewMessage
 }
