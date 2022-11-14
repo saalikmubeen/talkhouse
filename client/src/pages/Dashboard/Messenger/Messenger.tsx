@@ -11,10 +11,10 @@ const MainContainer = styled("div")({
 });
 
 const Messenger = () => {
-  const chosenChatDetails = useAppSelector((state) => state.chat.chosenChatDetails);
+  const { chosenChatDetails, chosenGroupChatDetails } = useAppSelector((state) => state.chat);
 
   return <MainContainer>
-    {chosenChatDetails?.userId ?  <ChatDetails/> : <WelcomeMessage/>}
+    {chosenChatDetails?.userId || chosenGroupChatDetails?.groupId ?  <ChatDetails/> : <WelcomeMessage/>}
   </MainContainer>;
 };
 

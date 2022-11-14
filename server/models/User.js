@@ -11,6 +11,7 @@ const userSchema = new mongoose.Schema(
         password: { type: String, required: [true, "can't be blank"] },
 
         friends: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+        groupChats: [{ type: mongoose.Schema.Types.ObjectId, ref: "GroupChat" }],
     },
     { timestamps: true }
 );

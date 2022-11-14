@@ -1,5 +1,5 @@
 // import { Dispatch } from "redux";
-import { actionTypes, SetChosenChatDetails, SetMessages, Message, SetTyping, AddNewMessage, SetInitialTypingStatus, Typing } from "./types";
+import { actionTypes, SetChosenChatDetails, SetMessages, Message, SetTyping, AddNewMessage, SetInitialTypingStatus, Typing, GroupChatDetails, SetChosenGroupChatDetails, ResetChat } from "./types";
 
 export const setChosenChatDetails = (chatDetails: {
     userId: string;
@@ -7,6 +7,13 @@ export const setChosenChatDetails = (chatDetails: {
 }): SetChosenChatDetails => {
     return {
         type: actionTypes.setChosenChatDetails,
+        payload: chatDetails,
+    };
+};
+
+export const setChosenGroupChatDetails = (chatDetails: GroupChatDetails): SetChosenGroupChatDetails => {
+    return {
+        type: actionTypes.setChosenGroupChatDetails,
         payload: chatDetails,
     };
 };
@@ -40,3 +47,9 @@ export const setInitialTypingStatus = (typing: Array<Typing>): SetInitialTypingS
         payload: typing,
     };
 };
+
+export const resetChatAction = (): ResetChat => {
+    return {
+        type: actionTypes.resetChat
+    }
+}

@@ -1,5 +1,5 @@
 import { io, Socket } from "socket.io-client";
-import { setFriends, setOnlineUsers, setPendingInvitations } from "../actions/friendActions";
+import { setFriends, setGroupChatList, setOnlineUsers, setPendingInvitations } from "../actions/friendActions";
 import {addNewMessage, setInitialTypingStatus, setMessages, setTyping} from "../actions/chatActions";
 import { Message } from "../actions/types";
 import { store } from "../store";
@@ -33,20 +33,47 @@ interface OnlineUser {
     socketId: string;
 }
 
+interface GroupChatDetails {
+    groupId: string;
+    groupName: string;
+    participants: Array<{
+        _id: string;
+        username: string;
+        email: string;
+    }>;
+    admin: {
+        _id: string;
+        username: string;
+        email: string;
+    };
+}
+
 
 interface ServerToClientEvents {
     "friend-invitations": (data: Array<PendingInvitation>) => void;
     "friends-list": (data: Array<Friend>) => void;
     "online-users": (data: Array<OnlineUser>) => void;
 
+    "groupChats-list": (data: Array<GroupChatDetails>) => void;
+
+    "direct-message": (data: {
+        newMessage: Message;
+        participants: Array<string>;
+    }) => void;
+
+    "group-message": (data: {
+        newMessage: Message;
+        groupChatId: string;
+    }) => void;
+
     "direct-chat-history": (data: {
         messages: Array<Message>;
         participants: Array<string>;
     }) => void;
 
-    "direct-message": (data: {
-        newMessage: Message;
-        participants: Array<string>;
+    "group-chat-history": (data: {
+        messages: Array<Message>;
+        groupChatId: string;
     }) => void;
 
     "notify-typing": (data: { senderUserId: string; typing: boolean }) => void;
@@ -75,7 +102,11 @@ interface ClientToServerEvents {
         receiverUserId: string;
     }) => void;
 
+    "group-message": (data: { message: string; groupChatId: string }) => void;
+
     "direct-chat-history": (data: { receiverUserId: string }) => void;
+
+    "group-chat-history": (data: { groupChatId: string }) => void;
 
     "notify-typing": (data: {
         receiverUserId: string;
@@ -95,9 +126,7 @@ interface ClientToServerEvents {
         signal?: SimplePeer.SignalData;
     }) => void;
 
-    "notify-chat-left": (data: {
-        receiverUserId: string;
-    }) => void
+    "notify-chat-left": (data: { receiverUserId: string }) => void;
 }
 
 let currentPeerConnection: any = null;
@@ -151,36 +180,82 @@ const connectWithSocketServer = (userDetails: UserDetails) => {
     });
 
 
+    socket.on("groupChats-list", (data) => {
+        console.log(data)
+        store.dispatch(setGroupChatList(data) as any);
+    })
+
+
     socket.on("direct-chat-history", (data) => {
         const { messages, participants } = data;
 
-        const receiverId = store.getState().chat.chosenChatDetails?.userId as string;
-        const senderId = (store.getState().auth.userDetails as any)._id;
+        const chatDetails = store.getState().chat.chosenChatDetails;
 
-        // only update the store with messages if the participant is the one we are currently chatting with
-        const isActive = participants.includes(receiverId) && participants.includes(senderId);
+        if(chatDetails) {
+            const receiverId = chatDetails.userId;
+            const senderId = (store.getState().auth.userDetails as any)._id;
 
-        if (isActive) {
-            store.dispatch(setMessages(messages) as any);
+            // only update the store with messages if the participant is the one we are currently chatting with
+            const isActive =
+                participants.includes(receiverId) &&
+                participants.includes(senderId);
+
+            if (isActive) {
+                store.dispatch(setMessages(messages) as any);
+            }
         }
 
     })
+
+    socket.on("group-chat-history", (data) => {
+        console.log(data)
+        const { messages, groupChatId } = data;
+
+        const groupChatDetails = store.getState().chat.chosenGroupChatDetails;
+
+        if (groupChatDetails) {
+
+            // only update the store with messages if the group chat is the one we are currently in
+            const isActive = groupChatDetails.groupId === groupChatId
+
+            if (isActive) {
+                store.dispatch(setMessages(messages) as any);
+            }
+        }
+    });
 
     socket.on("direct-message", (data) => {
         const { newMessage, participants } = data;
 
-        const receiverId = store.getState().chat.chosenChatDetails
-            ?.userId as string;
-        const senderId = (store.getState().auth.userDetails as any)._id;
+        const chatDetails = store.getState().chat.chosenChatDetails;
 
-         const isActive =
-             participants.includes(receiverId) &&
-             participants.includes(senderId);
+        if(chatDetails) {
+             const receiverId = chatDetails.userId;
+             const senderId = (store.getState().auth.userDetails as any)._id;
 
-        if (isActive) {
-            store.dispatch(addNewMessage(newMessage) as any);
+             const isActive =
+                 participants.includes(receiverId) &&
+                 participants.includes(senderId);
+
+             if (isActive) {
+                 store.dispatch(addNewMessage(newMessage) as any);
+             }
         }
     })
+
+    socket.on("group-message", (data) => {
+        const { newMessage, groupChatId } = data;
+
+        const chatDetails = store.getState().chat.chosenGroupChatDetails;
+
+        if (chatDetails) {
+            const isActive = chatDetails.groupId === groupChatId
+
+            if (isActive) {
+                store.dispatch(addNewMessage(newMessage) as any);
+            }
+        }
+    });
 
     socket.on("notify-typing", (data) => {
         
@@ -205,12 +280,24 @@ const sendDirectMessage = (data: {message: string, receiverUserId: string}) => {
 }
 
 
+const sendGroupMessage = (data: {
+    message: string;
+    groupChatId: string;
+}) => {
+    socket.emit("group-message", data);
+};
+
+
 const fetchDirectChatHistory = (data: {
     receiverUserId: string;
 }) => {
     socket.emit("direct-chat-history", data);
 };
 
+
+const fetchGroupChatHistory = (data: { groupChatId: string }) => {
+    socket.emit("group-chat-history", data);
+};
 
 const notifyTyping = (data: {
     receiverUserId: string;
@@ -318,4 +405,4 @@ const notifyChatLeft = (receiverUserId: string) => {
 
 }
 
-export { connectWithSocketServer, sendDirectMessage, fetchDirectChatHistory, notifyTyping, callRequest, callResponse, notifyChatLeft, currentPeerConnection, setCurrentPeerConnection };
+export { connectWithSocketServer, sendDirectMessage, fetchDirectChatHistory, notifyTyping, callRequest, callResponse, notifyChatLeft, currentPeerConnection, setCurrentPeerConnection, sendGroupMessage, fetchGroupChatHistory };

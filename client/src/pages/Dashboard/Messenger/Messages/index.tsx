@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef }  from "react";
 import { styled } from "@mui/system";
 import MessagesHeader from "./Header";
-import DUMMY_MESSAGES from "./DUMMY_MESSAGES";
+// import DUMMY_MESSAGES from "./DUMMY_MESSAGES";
 import Message from "./Message";
 import { useAppSelector } from "../../../../store";
-import { fetchDirectChatHistory } from "../../../../socket/socketConnection";
+import { fetchDirectChatHistory, fetchGroupChatHistory } from "../../../../socket/socketConnection";
 import { Message as MessageType } from "../../../../actions/types";
 import DateSeparator from "./DateSeparator";
 import { Typography } from "@mui/material";
@@ -25,7 +25,7 @@ const Messages = () => {
     const [scrollPosition, setScrollPosition] = useState(0);
     const {chat, auth: {userDetails}} = useAppSelector((state) => state);
 
-    const { chosenChatDetails: chatDetails, messages } = chat;
+    const { chosenChatDetails, messages, chosenGroupChatDetails } = chat;
 
     const sameAuthor = (message: MessageType, index: number) => {
 
@@ -46,12 +46,18 @@ const Messages = () => {
     };
     
     useEffect(() => {
-
-        if (chatDetails) {
-            fetchDirectChatHistory({receiverUserId: chatDetails.userId});
+        if (chosenChatDetails) {
+            fetchDirectChatHistory({
+                receiverUserId: chosenChatDetails.userId,
+            });
         }
 
-    }, [chatDetails]);
+        if(chosenGroupChatDetails) {
+            fetchGroupChatHistory({
+                groupChatId: chosenGroupChatDetails.groupId
+            })
+        }
+    }, [chosenChatDetails, chosenGroupChatDetails]);
 
 
     useEffect(() => {
@@ -61,7 +67,7 @@ const Messages = () => {
 
     return (
         <MainContainer onScroll={handleScroll}>
-            <MessagesHeader scrollPosition={scrollPosition}/>
+            <MessagesHeader scrollPosition={scrollPosition} />
 
             <Typography
                 sx={{
@@ -70,7 +76,9 @@ const Messages = () => {
                     fontSize: "13px",
                 }}
             >
-                This is the beginning of your conversation with {chat.chosenChatDetails?.username}
+                {chat.chosenChatDetails?.userId
+                    ? `This is the beginning of your conversation with ${chat.chosenChatDetails?.username}`
+                    : "This is the beginning of the conversation with your friends!"}
             </Typography>
 
             {messages.map((message, index) => {
@@ -85,7 +93,7 @@ const Messages = () => {
                     index > 0 ? thisMessageDate === prevMessageDate : true;
 
                 const incomingMessage =
-                    message.author._id === chatDetails?.userId;
+                    message.author._id !== (userDetails as any)._id;
 
                 return (
                     <div key={message._id} style={{ width: "97%" }}>

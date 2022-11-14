@@ -33,3 +33,7 @@ export const validateMail = (email: string) => {
 const validateUsername = (username: string) => {
     return username.length > 2 && username.length < 13;
 };
+
+export const validateGroupName = (name: string) => {
+    return name.length > 2 && name.length < 13;
+};

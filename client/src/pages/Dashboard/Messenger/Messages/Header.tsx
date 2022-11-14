@@ -7,6 +7,7 @@ import VideoCallIcon from "@mui/icons-material/VideoCall";
 import Avatar from "../../../../components/Avatar";
 import { useAppSelector } from "../../../../store";
 import { callRequest } from "../../../../socket/socketConnection";
+import GroupChatDropDown from "./GroupChatDropDown";
 
 const MainContainer = styled("div")({
     width: "100%",
@@ -45,7 +46,7 @@ const MessagesHeader: React.FC<{
     let navPosition = navRef.current?.getBoundingClientRect().top;
 
 
-    const {auth: {userDetails}, chat: {chosenChatDetails}} = useAppSelector((state) => state);
+    const {auth: {userDetails}, chat: {chosenChatDetails, chosenGroupChatDetails}} = useAppSelector((state) => state);
 
     const navActiveStyle = scrollPosition >= navPosition! ? { backgroundColor: "#202225" } : { backgroundColor: "transparent" }; 
 
@@ -67,37 +68,41 @@ const MessagesHeader: React.FC<{
                 </Typography>
             </NameWrapper> */}
 
-            <CallButtons>
-                <IconButton
-                    style={{ color: "white" }}
-                    onClick={() => {
-                        callRequest({
-                            audioOnly: true,
-                            callerName: "token" in userDetails ? userDetails.username : "",
-                            receiverUserId: chosenChatDetails?.userId!,
-                        })
-                    }}
-                >
-                    <AddIcCallIcon />
-                </IconButton>
-
-                <IconButton
-                    style={{ color: "white" }}
-                    onClick={() => {
-                        callRequest({
-                            audioOnly: false,
-                            callerName:
-                                "token" in userDetails
+            {chosenChatDetails && (
+                <CallButtons>
+                    <IconButton
+                        style={{ color: "white" }}
+                        onClick={() => {
+                            callRequest({
+                                audioOnly: true,
+                                callerName: userDetails
                                     ? userDetails.username
                                     : "",
-                            receiverUserId: chosenChatDetails?.userId!,
-                        });
+                                receiverUserId: chosenChatDetails?.userId!,
+                            });
+                        }}
+                    >
+                        <AddIcCallIcon />
+                    </IconButton>
 
-                    }}
-                >
-                    <VideoCallIcon />
-                </IconButton>
-            </CallButtons>
+                    <IconButton
+                        style={{ color: "white" }}
+                        onClick={() => {
+                            callRequest({
+                                audioOnly: false,
+                                callerName: userDetails
+                                    ? userDetails.username
+                                    : "",
+                                receiverUserId: chosenChatDetails?.userId!,
+                            });
+                        }}
+                    >
+                        <VideoCallIcon />
+                    </IconButton>
+                </CallButtons>
+            )}
+
+            {chosenGroupChatDetails?.groupId && <GroupChatDropDown />}
         </MainContainer>
     );
 };

@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Conversation = require("../models/Conversation");
 const FriendInvitation = require("../models/FriendInvitation"); 
 const User = require("../models/User");
+const GroupChat = require("../models/GroupChat");
 const { getActiveConnections } = require("../socket/connectedUsers");
 const  { getServerSocketInstance } = require("../socket/connectedUsers");
 
@@ -33,22 +34,76 @@ const updateUsersInvitations = async (userId, isNew) => {
 }
 
 
-const updateUsersFriendsList = async (userId) => {
-
-    // get the user's friends list
-    const user = await User.findById(userId).populate("friends", { username: 1, email: 1, _id: 1 });
+const updateUsersGroupChatList = async (userId) => {
+    // get the user's group chat list
+    const user = await User.findById(userId).populate([
+        {
+            path: "groupChats",
+            populate: {
+                path: "participants",
+                model: "User",
+                select: "_id email username",
+            },
+        },
+        {
+            path: "groupChats",
+            populate: {
+                path: "admin",
+                model: "User",
+                select: "_id email username",
+            },
+        },
+    ]);
 
     if (!user) {
         return;
     }
 
-    const friends = user.friends ? user.friends.map((friend) => {
-        return {
-            id: friend._id,
-            username: friend.username,
-            email: friend.email
-        }
-    }): []
+    const groupChats = user.groupChats
+        ? user.groupChats.map((groupChat) => {
+              return {
+                  groupId: groupChat._id,
+                  groupName: groupChat.name,
+                  participants: groupChat.participants,
+                  admin: groupChat.admin
+              };
+          })
+        : [];
+
+    // get the users's active socket connections(socket ids)
+    const activeConnections = getActiveConnections(userId);
+
+    // send user's groupChats list to all the active connections of this user(userId)
+
+    const io = getServerSocketInstance();
+
+    activeConnections.forEach((socketId) => {
+        io.to(socketId).emit("groupChats-list", groupChats || []);
+    });
+};
+
+
+const updateUsersFriendsList = async (userId) => {
+    // get the user's friends list
+    const user = await User.findById(userId).populate("friends", {
+        username: 1,
+        email: 1,
+        _id: 1,
+    });
+
+    if (!user) {
+        return;
+    }
+
+    const friends = user.friends
+        ? user.friends.map((friend) => {
+              return {
+                  id: friend._id,
+                  username: friend.username,
+                  email: friend.email,
+              };
+          })
+        : [];
 
     // get the users's active socket connections(socket ids)
     const activeConnections = getActiveConnections(userId);
@@ -109,7 +164,8 @@ const updateChatHistory = async (conversationId, toSpecificSocketId=null) => {
 }
 
 
-const sendNewMessage = async (conversationId, newMessage) => {
+const sendNewDirectMessage = async (conversationId, newMessage) => {
+
     // get the conversation
     const conversation = await Conversation.findById(conversationId);
 
@@ -152,9 +208,56 @@ const sendNewMessage = async (conversationId, newMessage) => {
 };
 
 
+const sendNewGroupMessage = async (groupChatId, newMessage) => {
+
+    // get the group chat
+    const groupChat = await GroupChat.findById(groupChatId);
+
+    const messageAuthor = await User.findById(newMessage.author);
+
+    if (!messageAuthor || !groupChat) {
+        return;
+    }
+
+    const message = {
+        __v: newMessage.__v,
+        _id: newMessage._id,
+        content: newMessage.content,
+        createdAt: newMessage.createdAt,
+        updatedAt: newMessage.updatedAt,
+        type: newMessage.type,
+        author: {
+            _id: messageAuthor._id,
+            username: messageAuthor.username,
+        },
+    };
+
+    const io = getServerSocketInstance();
+
+
+    // get the participant's active socket connections(socket ids)
+    groupChat.participants.forEach((participantId) => {
+        const activeConnections = getActiveConnections(
+            participantId.toString()
+        );
+
+        // send the new massage to all the active connections of this user(participantId)
+        activeConnections.forEach((socketId) => {
+            io.to(socketId).emit("group-message", {
+                newMessage: message,
+                groupChatId: groupChat._id.toString(),
+            });
+        });
+    });
+};
+
+
+
 module.exports = {
     updateUsersInvitations,
     updateUsersFriendsList,
+    updateUsersGroupChatList,
     updateChatHistory,
-    sendNewMessage
+    sendNewDirectMessage,
+    sendNewGroupMessage
 }

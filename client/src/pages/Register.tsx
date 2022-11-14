@@ -75,7 +75,7 @@ const Register = () => {
 
 
     useEffect(() => {
-        if ("token" in userDetails) {
+        if (userDetails?.token) {
             navigate("/dashboard");
         }
     }, [userDetails, navigate]);

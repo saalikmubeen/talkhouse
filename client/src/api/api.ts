@@ -3,8 +3,10 @@ import {
     LoginArgs,
     AuthResponse,
     RegisterArgs,
-    inviteFriendArgs,
+    InviteFriendArgs,
     GetMeResponse,
+    AddMembersToGroupArgs,
+    LeaveGroupArgs,
 } from "./types";
 
 const BASE_URL = "http://localhost:5000"; 
@@ -43,7 +45,7 @@ const checkForAuthorization = (error: any) => {
     const responseCode = error?.response?.status;
 
     if (responseCode) {
-        (responseCode === 401 || responseCode === 403) && logOut();
+        (responseCode === 401) && logOut();
     }
 };
 
@@ -100,7 +102,7 @@ export const getMe = async () => {
     }
 };
 
-export const inviteFriendRequest = async ({ email }: inviteFriendArgs) => {
+export const inviteFriendRequest = async ({ email }: InviteFriendArgs) => {
     try {
         const res = await api.post("/api/invite-friend/invite", {
             email,
@@ -140,6 +142,55 @@ export const acceptFriendRequest = async (invitationId: string) => {
     try {
         const res = await api.post("/api/invite-friend/accept", {
             invitationId,
+        });
+
+        return res.data;
+    } catch (err: any) {
+        checkForAuthorization(err);
+        return {
+            error: true,
+            message: err.response.data,
+        };
+    }
+};
+
+export const createGroupChat = async (name: string) => {
+    try {
+        const res = await api.post("/api/group-chat", {
+            name,
+        });
+
+        return res.data;
+    } catch (err: any) {
+        checkForAuthorization(err);
+        return {
+            error: true,
+            message: err.response.data,
+        };
+    }
+};
+
+export const addMembersToGroup = async (data: AddMembersToGroupArgs) => {
+    try {
+        const res = await api.post("/api/group-chat/add", {
+            friendIds: data.friendIds,
+            groupChatId: data.groupChatId
+        });
+
+        return res.data;
+    } catch (err: any) {
+        checkForAuthorization(err);
+        return {
+            error: true,
+            message: err.response.data,
+        };
+    }
+};
+
+export const leaveGroup = async (data: LeaveGroupArgs) => {
+    try {
+        const res = await api.post("/api/group-chat/leave", {
+            groupChatId: data.groupChatId,
         });
 
         return res.data;

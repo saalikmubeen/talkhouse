@@ -3,12 +3,14 @@ const requireSocketAuth = require("../middlewares/requireSocketAuth");
 const callRequestHandler = require("../socketControllers/callRequestHandler");
 const callResponseHandler = require("../socketControllers/callResponseHandler");
 const directChatHistoryHandler = require("../socketControllers/directChatHistoryHandler");
-const directMessageHandler = require("../socketControllers/directMessageHandler");
+const directMessageHandler = require("../../../../discord-app/directMessageHandler");
 const disconnectHandler = require("../socketControllers/disconnectHandler");
+const groupMessageHandler = require("../socketControllers/groupMessageHandler");
 const newConnectionHandler = require("../socketControllers/newConnectionHandler");
 const notifyChatLeft = require("../socketControllers/notifyChatLeft");
 const notifyTypingHandler = require("../socketControllers/notifyTypingHandler");
 const { setServerSocketInstance, getOnlineUsers } = require("./connectedUsers");
+const groupChatHistoryHandler = require("../socketControllers/groupChatHistoryHandler");
 
 
 const createSocketServer = (server) => {
@@ -36,8 +38,16 @@ const createSocketServer = (server) => {
             directMessageHandler(socket, data);
         })
 
+        socket.on("group-message", (data) => {
+            groupMessageHandler(socket, data);
+        });
+
         socket.on("direct-chat-history", (data) => {
             directChatHistoryHandler(socket, data.receiverUserId);
+        });
+
+        socket.on("group-chat-history", (data) => {
+            groupChatHistoryHandler(socket, data.groupChatId);
         });
 
 

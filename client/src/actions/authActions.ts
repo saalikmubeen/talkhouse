@@ -2,6 +2,8 @@ import { Dispatch,  } from "redux";
 import { login, register, getMe } from "../api/api";
 import { LoginArgs, RegisterArgs } from "../api/types";
 import { showAlert } from "./alertActions";
+import { resetChatAction } from "./chatActions";
+import { resetFriendsAction } from "./friendActions";
 import {actionTypes, CurrentUser} from "./types";
 
 
@@ -103,6 +105,9 @@ export const logoutUser = () => {
         dispatch({
             type: actionTypes.logout,
         });
+
+        dispatch(resetChatAction());
+        dispatch(resetFriendsAction());
 
         dispatch({
             type: actionTypes.resetChat

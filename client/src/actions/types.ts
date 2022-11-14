@@ -12,12 +12,15 @@ export enum actionTypes {
     setFriends,
     setPendingInvitations,
     setOnlineUsers,
+    setGroupChatList,
+    resetFriends,
 
     setChatType,
     setChosenChatDetails,
     setMessages,
     addNewMessage,
     resetChat,
+    setChosenGroupChatDetails,
     
     setTyping,
     setInitialTypingStatus,
@@ -95,6 +98,23 @@ export interface OnlineUser {
     socketId: string;
 }
 
+
+export interface GroupChatDetails {
+    groupId: string;
+    groupName: string;
+    participants: Array<{
+        _id: string;
+        username: string;
+        email: string;
+    }>;
+    admin: {
+        _id: string;
+        username: string;
+        email: string;
+    };
+}
+
+
 interface SetPendingInvitationAction  {
     type: actionTypes.setPendingInvitations,
     payload: Array<PendingInvitation>
@@ -112,6 +132,10 @@ interface SetOnlineUsers {
     payload: Array<OnlineUser>;
 }
 
+export interface SetGroupChatList {
+    type: actionTypes.setGroupChatList,
+    payload: Array<GroupChatDetails>
+}
 
 export interface SetChosenChatDetails {
     type: actionTypes.setChosenChatDetails,
@@ -121,8 +145,17 @@ export interface SetChosenChatDetails {
     }
 }
 
+export interface SetChosenGroupChatDetails {
+    type: actionTypes.setChosenGroupChatDetails;
+    payload: GroupChatDetails;
+}
+
 export interface ResetChat {
     type: actionTypes.resetChat
+}
+
+export interface ResetFriends {
+    type: actionTypes.resetFriends;
 }
 
 export interface Message {
@@ -219,7 +252,12 @@ interface SetAudioOnly {
 
 export type AuthActions = AuthSuccessAction | AuthErrorAction | LogoutAction | AuthLoadingAction; 
 export type AlertActions = ShowAlertAction | HideAlertAction;
-export type FriendsActions = SetPendingInvitationAction | SetFriends | SetOnlineUsers;
-export type ChatActions = SetChosenChatDetails | SetMessages | AddNewMessage | SetTyping | SetInitialTypingStatus | ResetChat;
+export type FriendsActions =
+    | SetPendingInvitationAction
+    | SetFriends
+    | SetOnlineUsers
+    | SetGroupChatList
+    | ResetFriends;
+export type ChatActions = SetChosenChatDetails | SetChosenGroupChatDetails | SetMessages | AddNewMessage | SetTyping | SetInitialTypingStatus | ResetChat;
 export type VideoChatActions = SetLocalStream | SetRemoteStream | SetCallRequest | SetCallStatus | 
             ClearVideChatState | setOtherUserId | setScreenSharingStream | SetAudioOnly;

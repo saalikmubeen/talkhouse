@@ -9,7 +9,7 @@ export type RegisterArgs = {
     username: string;
 };
 
-export type inviteFriendArgs = {
+export type InviteFriendArgs = {
     email: string;
 }
 
@@ -28,4 +28,13 @@ export type GetMeResponse = {
         email: string;
         username: string;
     };
+};
+
+export type AddMembersToGroupArgs = {
+    friendIds: string[];
+    groupChatId: string;
+};
+
+export type LeaveGroupArgs = {
+    groupChatId: string;
 };

@@ -1,5 +1,5 @@
 const { addNewConnectedUser, getOnlineUsers } = require("../socket/connectedUsers");
-const { updateUsersInvitations, updateUsersFriendsList } = require("./notifyConnectedSockets");
+const { updateUsersInvitations, updateUsersFriendsList, updateUsersGroupChatList } = require("./notifyConnectedSockets");
 
 const newConnectionHandler = (socket, io) => {
     addNewConnectedUser({ socketId: socket.id, userId: socket.user.userId });
@@ -12,6 +12,9 @@ const newConnectionHandler = (socket, io) => {
 
     // send user's friends to all the active connections of this user(userId)
     updateUsersFriendsList(socket.user.userId);
+
+    // send user's groupChats to all the active connections of this user(userId)
+    updateUsersGroupChatList(socket.user.userId);
 }
 
 

@@ -76,7 +76,7 @@ const Login = () => {
 
     useEffect(() => {
         
-        if ("token" in userDetails) {
+        if (userDetails?.token) {
             navigate("/dashboard")
         }
 

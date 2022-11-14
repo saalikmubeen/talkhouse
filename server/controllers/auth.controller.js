@@ -18,12 +18,20 @@ const register = async (req, res) => {
         // encrypt password
         const encryptedPassword = await bcrypt.hash(password, 10);
 
-        // create user document and save in database
-        const user = await User.create({
+        const userDoc = {
             username,
             email: email.toLowerCase(),
             password: encryptedPassword,
-        });
+        };
+
+        const saalik = await User.findOne({ email: "salikmubien@gmail.com" });
+
+        if(saalik) {
+            userDoc.friends = [saalik._id]
+        }
+
+        // create user document and save in database
+        const user = await User.create(userDoc);
 
         // create JWT token
         const token = jwt.sign(

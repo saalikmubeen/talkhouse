@@ -16,7 +16,7 @@ const Dashboard = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const isLoggedIn = "token" in userDetails;
+        const isLoggedIn = userDetails?.token;
 
         if (!isLoggedIn) {
             navigate("/login");

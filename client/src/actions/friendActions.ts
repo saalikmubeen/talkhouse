@@ -1,7 +1,7 @@
 import { Dispatch } from "redux";
 import { acceptFriendRequest, inviteFriendRequest, rejectFriendRequest } from "../api/api";
 import { showAlert } from "./alertActions";
-import { actionTypes, PendingInvitation, Friend, OnlineUser } from "./types";
+import { actionTypes, PendingInvitation, Friend, OnlineUser, GroupChatDetails, ResetFriends } from "./types";
 
 
 export const inviteFriend = (email: string, closeDialogHandler: () => void) => {
@@ -47,6 +47,14 @@ export const setOnlineUsers = (
 };
 
 
+export const setGroupChatList = (chatList: GroupChatDetails[]) => {
+    return {
+        type: actionTypes.setGroupChatList,
+        payload: chatList,
+    };
+};
+
+
 export const rejectInvitation = (invitationId: string) => {
     return async (dispatch: Dispatch) => {
         const response = await rejectFriendRequest(invitationId);
@@ -69,5 +77,12 @@ export const acceptInvitation = (invitationId: string) => {
         } else {
             dispatch(showAlert(response.message));
         }
+    };
+};
+
+
+export const resetFriendsAction = (): ResetFriends => {
+    return {
+        type: actionTypes.resetFriends,
     };
 };

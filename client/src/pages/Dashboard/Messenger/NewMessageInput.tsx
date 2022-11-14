@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { styled } from "@mui/system";
 import { useAppSelector } from "../../../store";
-import { notifyTyping, sendDirectMessage } from "../../../socket/socketConnection";
+import { notifyTyping, sendDirectMessage, sendGroupMessage } from "../../../socket/socketConnection";
 
 const MainContainer = styled("div")({
     height: "60px",
@@ -22,22 +22,35 @@ const Input = styled("input")({
     padding: "0 10px",
 });
 
-const NewMessageInput = () => {
+const NewMessageInput: React.FC = () => {
     const [message, setMessage] = useState("");
     const [focused, setFocused] = useState(false);
 
     const onFocus = () => setFocused(true);
     const onBlur = () => setFocused(false);
 
-    const chatDetails = useAppSelector((state) => state.chat.chosenChatDetails);
+    const { chosenChatDetails, chosenGroupChatDetails } = useAppSelector((state) => state.chat);
+
+
 
     const handleSendMessage = (e: React.KeyboardEvent<HTMLInputElement>) => {
         
         if (e.key === "Enter") {
-            sendDirectMessage({
-                message,
-                receiverUserId: chatDetails?.userId!,
-            });
+            
+            if(chosenChatDetails) {
+                sendDirectMessage({
+                    message,
+                    receiverUserId: chosenChatDetails.userId!,
+                });
+            }
+            
+            if(chosenGroupChatDetails) {
+                sendGroupMessage({
+                    message,
+                    groupChatId: chosenGroupChatDetails.groupId
+                })
+            }
+
 
             setMessage("");
         }
@@ -51,13 +64,18 @@ const NewMessageInput = () => {
 
     useEffect(() => {
         // notify the receiverUser that the user(sender) is typing
-        notifyTyping({ receiverUserId: chatDetails?.userId!, typing: focused });
-    }, [focused, chatDetails?.userId]);
+        if (chosenChatDetails?.userId) {
+            notifyTyping({
+                receiverUserId: chosenChatDetails.userId!,
+                typing: focused,
+            });
+        }
+    }, [focused, chosenChatDetails?.userId]);
 
     return (
         <MainContainer>
             <Input
-                placeholder={`Write message to ${chatDetails?.username}`}
+                placeholder={chosenChatDetails  ? `Write message to ${chosenChatDetails.username}` : "Your message..."}
                 value={message}
                 onChange={handleChange}
                 onKeyDown={handleSendMessage}

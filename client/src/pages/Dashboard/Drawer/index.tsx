@@ -13,6 +13,10 @@ import FriendsList from "../FriendsSideBar/FriendsList/FriendsList";
 import FriendsTitle from "../FriendsSideBar/FriendsTitle";
 import PendingInvitationsList from "../FriendsSideBar/PendingInvitationsList/PendingInvitationsList";
 import DropDownMenu from "./DropdownMenu";
+import CreateRoomButton from "./CreateRoomButton";
+import ActiveRoomsButton from "./ActiveRoomsButton";
+import CreateGroupChatButton from "./CreateGroupChatButton";
+import GroupChatList from "../FriendsSideBar/GroupChatList";
 
 const drawerWidth = 240;
 
@@ -54,8 +58,23 @@ export default function ResponsiveDrawer(props: Props) {
                 <DropDownMenu />
             </div>
             <Divider />
+            <div
+                style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-around",
+                    margin: "10px 0",
+                }}
+            >
+                {/* <CreateRoomButton /> */}
+                <CreateGroupChatButton />
+                <ActiveRoomsButton />
+            </div>
             <FriendsTitle title="Private Messages" />
             <FriendsList />
+            <Divider />
+            <FriendsTitle title="Group Chats" />
+            <GroupChatList />
             <Divider />
             <FriendsTitle title="Invitations" />
             <PendingInvitationsList />

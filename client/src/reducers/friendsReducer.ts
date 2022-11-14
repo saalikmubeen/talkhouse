@@ -1,17 +1,19 @@
 import { Reducer } from "redux";
-import { FriendsActions, actionTypes, PendingInvitation, Friend, OnlineUser } from "../actions/types";
+import { FriendsActions, actionTypes, PendingInvitation, Friend, OnlineUser, GroupChatDetails } from "../actions/types";
 
 
 const initialState = {
     friends: [],
     pendingInvitations: [],
     onlineUsers: [],
+    groupChatList: []
 };
 
 interface FriendsState {
     friends: Array<Friend>;
     pendingInvitations: Array<PendingInvitation>;
     onlineUsers: Array<OnlineUser>;
+    groupChatList: Array<GroupChatDetails>;
 }
 
 
@@ -36,6 +38,17 @@ const friendsReducer: Reducer<FriendsState, FriendsActions> = (
             return {
                 ...state,
                 onlineUsers: action.payload,
+            };
+
+        case actionTypes.setGroupChatList:
+            return {
+                ...state,
+                groupChatList: action.payload,
+            };
+
+        case actionTypes.resetFriends:
+            return {
+                ...initialState
             };
 
         default:

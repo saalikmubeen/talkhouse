@@ -40,7 +40,7 @@ export default function DropDownMenu() {
                 }}
             >
                 <MenuItem onClick={handleClick}>Logout</MenuItem>
-                <MenuItem> {"token" in userDetails && userDetails.username }</MenuItem>
+                <MenuItem> {userDetails?.username }</MenuItem>
             </Menu>
         </div>
     );
