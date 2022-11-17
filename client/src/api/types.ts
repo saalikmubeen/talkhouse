@@ -38,3 +38,11 @@ export type AddMembersToGroupArgs = {
 export type LeaveGroupArgs = {
     groupChatId: string;
 };
+
+export type DeleteGroupArgs = {
+    groupChatId: string;
+};
+
+export type RemoveFriendArgs = {
+    friendId: string;
+};

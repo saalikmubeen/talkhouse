@@ -25,7 +25,11 @@ export const loginUser = (credentials: LoginArgs) => {
                 payload: response.userDetails
             })
 
-            dispatch(showAlert(`Hi, ${response.userDetails.username}`));
+           dispatch(
+               showAlert(
+                   `Hi, ${response.userDetails.username} 👋. Welcome back.`
+               )
+           );
         }
     }
 } 
@@ -53,7 +57,11 @@ export const registerUser = (credentials: RegisterArgs) => {
                 payload: response.userDetails,
             });
 
-            dispatch(showAlert("Welcome to the Discord!"));
+            dispatch(
+                showAlert(
+                    `Hi 👋 ${response.userDetails.username}. Welcome to TalkHouse. I'm Saalik, the creator of TalkHouse. You have me a as a friend till you invite and add your other friends 😊.`
+                )
+            );
         }
     };
 }; 

@@ -7,6 +7,8 @@ import {
     GetMeResponse,
     AddMembersToGroupArgs,
     LeaveGroupArgs,
+    RemoveFriendArgs,
+    DeleteGroupArgs,
 } from "./types";
 
 const BASE_URL = "http://localhost:5000"; 
@@ -190,6 +192,38 @@ export const addMembersToGroup = async (data: AddMembersToGroupArgs) => {
 export const leaveGroup = async (data: LeaveGroupArgs) => {
     try {
         const res = await api.post("/api/group-chat/leave", {
+            groupChatId: data.groupChatId,
+        });
+
+        return res.data;
+    } catch (err: any) {
+        checkForAuthorization(err);
+        return {
+            error: true,
+            message: err.response.data,
+        };
+    }
+};
+
+export const removeFriend = async (data: RemoveFriendArgs) => {
+    try {
+        const res = await api.post("/api/invite-friend/remove", {
+            friendId: data.friendId,
+        });
+
+        return res.data;
+    } catch (err: any) {
+        checkForAuthorization(err);
+        return {
+            error: true,
+            message: err.response.data,
+        };
+    }
+};
+
+export const deleteGroup = async (data: DeleteGroupArgs) => {
+    try {
+        const res = await api.post("/api/group-chat/delete", {
             groupChatId: data.groupChatId,
         });
 

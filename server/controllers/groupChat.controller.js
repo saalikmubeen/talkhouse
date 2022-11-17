@@ -114,13 +114,12 @@ const leaveGroup = async (req, res) => {
         );
         await groupChat.save();
 
-
         // remove groupChat from the list of user's groupChats
         currentUser.groupChats = currentUser.groupChats.filter((chat) => {
             return chat.toString() !== groupChat._id.toString();
-        })
+        });
 
-        await currentUser.save()
+        await currentUser.save();
 
         // update the chat list of user who left the chat.
         updateUsersGroupChatList(currentUser._id.toString());
@@ -139,8 +138,54 @@ const leaveGroup = async (req, res) => {
     }
 };
 
+const deleteGroup = async (req, res) => {
+    try {
+        const { userId } = req.user;
+        const { groupChatId } = req.body;
+
+        // check if groupChat exists
+        const groupChat = await GroupChat.findOne({ _id: groupChatId });
+
+        if (!groupChat) {
+            return res.status(404).send("Sorry, the group chat doesn't exist");
+        }
+
+        if (groupChat.admin.toString() !== userId) {
+            return res
+                .status(403)
+                .send("Forbidden. Only group admins can delete a group.");
+        }
+
+        // update groupChat list of all the participants
+        groupChat.participants.forEach(async (friendId) => {
+            const participant = await User.findById(friendId);
+
+            if (participant) {
+                participant.groupChats = participant.groupChats.filter(
+                    (chat) => chat.toString() !== groupChat._id.toString()
+                );
+                await participant.save();
+
+                // update the users group chat list
+                updateUsersGroupChatList(friendId.toString());
+            }
+        });
+
+        // lastly delete the groupChat
+        groupChat.remove();
+
+        return res.status(200).send("Group deleted successfully!");
+    } catch (err) {
+        console.log(err);
+        return res
+            .status(500)
+            .send("Sorry, something went wrong. Please try again later");
+    }
+};
+
 module.exports = {
     createGroupChat,
     addMemberToGroup,
-    leaveGroup
+    leaveGroup,
+    deleteGroup,
 };

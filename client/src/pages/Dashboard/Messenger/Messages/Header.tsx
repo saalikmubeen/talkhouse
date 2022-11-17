@@ -7,7 +7,7 @@ import VideoCallIcon from "@mui/icons-material/VideoCall";
 import Avatar from "../../../../components/Avatar";
 import { useAppSelector } from "../../../../store";
 import { callRequest } from "../../../../socket/socketConnection";
-import GroupChatDropDown from "./GroupChatDropDown";
+import ChatDropDown from "./ChatDropDown";
 
 const MainContainer = styled("div")({
     width: "100%",
@@ -35,7 +35,7 @@ const NameWrapper = styled("div")({
 const CallButtons = styled("div")({
     display: "flex",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-between",
 })
 
 const MessagesHeader: React.FC<{
@@ -46,7 +46,7 @@ const MessagesHeader: React.FC<{
     let navPosition = navRef.current?.getBoundingClientRect().top;
 
 
-    const {auth: {userDetails}, chat: {chosenChatDetails, chosenGroupChatDetails}} = useAppSelector((state) => state);
+    const {auth: {userDetails}, chat: {chosenChatDetails}} = useAppSelector((state) => state);
 
     const navActiveStyle = scrollPosition >= navPosition! ? { backgroundColor: "#202225" } : { backgroundColor: "transparent" }; 
 
@@ -102,7 +102,7 @@ const MessagesHeader: React.FC<{
                 </CallButtons>
             )}
 
-            {chosenGroupChatDetails?.groupId && <GroupChatDropDown />}
+            <ChatDropDown />
         </MainContainer>
     );
 };

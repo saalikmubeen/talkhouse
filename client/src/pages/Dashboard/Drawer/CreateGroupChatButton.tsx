@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import CreateGroupChatDialog from "./CreateGroupChatDialog";
-import AddIcon from "@mui/icons-material/Add";
+// import AddIcon from "@mui/icons-material/Add";
+import GroupAddIcon from "@mui/icons-material/GroupAdd";
 
 const CreateGroupChatButton = () => {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -30,7 +31,7 @@ const CreateGroupChatButton = () => {
                     backgroundColor: "#5865F2",
                 }}
             >
-                <AddIcon />
+                <GroupAddIcon />
             </Button>
             <CreateGroupChatDialog
                 isDialogOpen={isDialogOpen}

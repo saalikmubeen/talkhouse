@@ -142,8 +142,51 @@ const rejectInvitation = async (req, res) => {
     }
 };
 
+
+
+const removeFriend = async (req, res) => {
+    try {
+        const { userId } = req.user;
+        const { friendId } = req.body;
+
+        // check if friend exists
+        const friend = await User.findOne({ _id: friendId });
+
+        if (!friend) {
+            return res
+                .status(404)
+                .send(
+                    "Sorry, the user you are trying to unfriend doesn't exist"
+                );
+        }
+
+        const currentUser = await User.findById(userId);
+
+        // update friends list of both users in the database
+
+        friend.friends = friend.friends.filter((f) => f.toString() !== currentUser._id.toString())
+        currentUser.friends = currentUser.friends.filter((f) => f.toString() !== friend._id.toString());
+
+        await friend.save();
+        await currentUser.save();
+
+        // update both users friends list
+        updateUsersFriendsList(currentUser._id.toString());
+        updateUsersFriendsList(friend._id.toString());
+
+        return res.status(200).send("Friend removed successfully!");
+    } catch (err) {
+        return res
+            .status(500)
+            .send("Sorry, something went wrong. Please try again later");
+    }
+};
+
+
+
 module.exports = {
     inviteFriend,
     acceptInvitation,
     rejectInvitation,
+    removeFriend
 };

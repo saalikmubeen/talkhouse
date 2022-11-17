@@ -4,7 +4,8 @@ const router = express.Router();
 const {
     createGroupChat,
     addMemberToGroup,
-    leaveGroup
+    leaveGroup,
+    deleteGroup
 } = require("../controllers/groupChat.controller");
 
 const Joi = require("joi");
@@ -24,6 +25,10 @@ const leaveGroupSchema = Joi.object({
     groupChatId: Joi.string().required(),
 });
 
+const deleteGroupSchema = Joi.object({
+    groupChatId: Joi.string().required(),
+});
+
 // create a groupChat
 router.post(
     "/",
@@ -40,12 +45,20 @@ router.post(
     addMemberToGroup
 );
 
-// add a friend to the group
+// leave a group
 router.post(
     "/leave",
     requireAuth,
     validator.body(leaveGroupSchema),
     leaveGroup
+);
+
+// delete a group
+router.post(
+    "/delete",
+    requireAuth,
+    validator.body(deleteGroupSchema),
+    deleteGroup
 );
 
 

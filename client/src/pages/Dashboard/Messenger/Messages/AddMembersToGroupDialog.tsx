@@ -60,11 +60,21 @@ const AddMembersToGroupDialog = ({
     isDialogOpen,
     closeDialogHandler,
 }: Props) => {
-
+    const {
+        friends: { friends },
+        chat: { chosenGroupChatDetails },
+    } = useAppSelector((state) => state);
+    
+    const currentGroupMembers = chosenGroupChatDetails?.participants.map(
+        (participant) => {
+            return participant._id.toString();
+        }
+    );
     const theme = useTheme();
-    const [friendIds, setFriendIds] = React.useState<string[]>([]);
+    const [friendIds, setFriendIds] = React.useState<string[]>(
+        currentGroupMembers || []
+    );
 
-    console.log(friendIds)
 
     const handleChange = (event: SelectChangeEvent<typeof friendIds>) => {
         const {
@@ -76,7 +86,6 @@ const AddMembersToGroupDialog = ({
         );
     };
 
-    const { friends: {friends}, chat: {chosenGroupChatDetails} } = useAppSelector((state) => state);
     const dispatch = useDispatch();
 
     const handleCloseDialog = () => {
