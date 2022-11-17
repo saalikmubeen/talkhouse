@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -67,7 +67,7 @@ const GroupParticipantsDialog = ({
                     >
                         {groupDetails.participants.map((participant) => {
                             return (
-                                <>
+                                <Fragment key={participant._id}>
                                     <ListItem alignItems="flex-start">
                                         <ListItemAvatar>
                                             <Avatar
@@ -104,7 +104,7 @@ const GroupParticipantsDialog = ({
                                         />
                                     </ListItem>
                                     <Divider variant="inset" component="li" />
-                                </>
+                                </Fragment>
                             );
                         })}
                     </List>
