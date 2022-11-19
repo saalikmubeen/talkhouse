@@ -14,9 +14,9 @@ import FriendsTitle from "../FriendsSideBar/FriendsTitle";
 import PendingInvitationsList from "../FriendsSideBar/PendingInvitationsList/PendingInvitationsList";
 import DropDownMenu from "./DropdownMenu";
 import CreateRoomButton from "./CreateRoomButton";
-import ActiveRoomsButton from "./ActiveRoomsButton";
 import CreateGroupChatButton from "./CreateGroupChatButton";
 import GroupChatList from "../FriendsSideBar/GroupChatList";
+import ActiveRooms from "../ActiveRooms";
 
 const drawerWidth = 240;
 
@@ -27,6 +27,7 @@ interface Props {
      */
     window?: () => Window;
     localStream: MediaStream | null;
+    isUserInRoom: boolean;
 }
 
 export default function ResponsiveDrawer(props: Props) {
@@ -66,10 +67,12 @@ export default function ResponsiveDrawer(props: Props) {
                     margin: "10px 0",
                 }}
             >
-                {/* <CreateRoomButton /> */}
                 <CreateGroupChatButton />
-                <ActiveRoomsButton />
+                <CreateRoomButton isUserInRoom={props.isUserInRoom} />
             </div>
+            <FriendsTitle title="Active Rooms" />
+            <ActiveRooms />
+            <Divider />
             <FriendsTitle title="Private Messages" />
             <FriendsList />
             <Divider />

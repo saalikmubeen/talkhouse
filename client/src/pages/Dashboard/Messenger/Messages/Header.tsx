@@ -46,7 +46,7 @@ const MessagesHeader: React.FC<{
     let navPosition = navRef.current?.getBoundingClientRect().top;
 
 
-    const {auth: {userDetails}, chat: {chosenChatDetails}} = useAppSelector((state) => state);
+    const {auth: {userDetails}, chat: {chosenChatDetails}, room: { isUserInRoom }} = useAppSelector((state) => state);
 
     const navActiveStyle = scrollPosition >= navPosition! ? { backgroundColor: "#202225" } : { backgroundColor: "transparent" }; 
 
@@ -72,6 +72,7 @@ const MessagesHeader: React.FC<{
                 <CallButtons>
                     <IconButton
                         style={{ color: "white" }}
+                        disabled={isUserInRoom}
                         onClick={() => {
                             callRequest({
                                 audioOnly: true,
@@ -87,6 +88,7 @@ const MessagesHeader: React.FC<{
 
                     <IconButton
                         style={{ color: "white" }}
+                        disabled={isUserInRoom}
                         onClick={() => {
                             callRequest({
                                 audioOnly: false,

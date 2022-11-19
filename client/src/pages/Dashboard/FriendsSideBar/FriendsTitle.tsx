@@ -21,6 +21,8 @@ const FriendsTitle = ({ title }: { title: string }) => {
                 <MailIcon />
             ) : title === "Group Chats" ? (
                 <GroupsIcon />
+            ) : title === "Active Rooms" ? (
+                <GroupsIcon />
             ) : (
                 <InboxIcon />
             )}

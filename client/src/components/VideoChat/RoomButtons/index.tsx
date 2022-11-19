@@ -24,37 +24,64 @@ const RoomButtons: React.FC<{
     isRoomMinimized: boolean;
     handleRoomResize: () => void;
 }> = ({ isRoomMinimized, handleRoomResize }) => {
-    const videoChat = useAppSelector((state) => state.videoChat);
+    const {videoChat, room} = useAppSelector((state) => state);
     const matches = useMediaQuery("(max-width:800px)");
 
-    if (!videoChat.localStream) {
-        return null;
-    }
-
     return (
-        <MainContainer
-            sx={{
-                ...(matches &&
-                    isRoomMinimized && {
-                        height: "100%",
-                        width: "15%",
-                        flexDirection: "column",
-                    }),
-            }}
-        >
-            {!videoChat.audioOnly && (
-                <>
-                    <ScreenShare videoChat={videoChat} />
-                    <Camera localStream={videoChat.localStream} />
-                </>
-            )}
-            <Microphone localStream={videoChat.localStream} />
-            <CloseRoom />
-            <ResizeRoomButton
-                isRoomMinimized={isRoomMinimized}
-                handleRoomResize={handleRoomResize}
-            />
-        </MainContainer>
+        <>
+            {videoChat.localStream ? (
+                <MainContainer
+                    sx={{
+                        ...(matches &&
+                            isRoomMinimized && {
+                                height: "100%",
+                                width: "15%",
+                                flexDirection: "column",
+                            }),
+                    }}
+                >
+                    {!videoChat.audioOnly && (
+                        <>
+                            <ScreenShare
+                                videoChat={videoChat}
+                                type="DIRECT CALL"
+                            />
+                            <Camera localStream={videoChat.localStream} />
+                        </>
+                    )}
+                    <Microphone localStream={videoChat.localStream} />
+                    <CloseRoom type="DIRECT CALL" />
+                    <ResizeRoomButton
+                        isRoomMinimized={isRoomMinimized}
+                        handleRoomResize={handleRoomResize}
+                    />
+                </MainContainer>
+            ) : room.localStreamRoom ? (
+                <MainContainer
+                    sx={{
+                        ...(matches &&
+                            isRoomMinimized && {
+                                height: "100%",
+                                width: "15%",
+                                flexDirection: "column",
+                            }),
+                    }}
+                >
+                    {!room.isUserJoinedWithOnlyAudio && (
+                        <ScreenShare room={room} type="ROOM" />
+                    )}
+                    <Microphone localStream={room.localStreamRoom} />
+                    {!room.isUserJoinedWithOnlyAudio && (
+                        <Camera localStream={room.localStreamRoom} />
+                    )}
+                    <CloseRoom type="ROOM" />
+                    <ResizeRoomButton
+                        isRoomMinimized={isRoomMinimized}
+                        handleRoomResize={handleRoomResize}
+                    />
+                </MainContainer>
+            ) : null}
+        </>
     );
 };
 

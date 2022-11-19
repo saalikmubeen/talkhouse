@@ -1,11 +1,35 @@
 import { io, Socket } from "socket.io-client";
-import { setFriends, setGroupChatList, setOnlineUsers, setPendingInvitations } from "../actions/friendActions";
-import {addNewMessage, setInitialTypingStatus, setMessages, setTyping} from "../actions/chatActions";
-import { Message } from "../actions/types";
+import {
+    setFriends,
+    setGroupChatList,
+    setOnlineUsers,
+    setPendingInvitations,
+} from "../actions/friendActions";
+import {
+    addNewMessage,
+    setInitialTypingStatus,
+    setMessages,
+    setTyping,
+} from "../actions/chatActions";
+import { ActiveRoom, Message } from "../actions/types";
 import { store } from "../store";
-import { setCallRequest, setCallStatus, setOtherUserId, setRemoteStream, clearVideoChat, setAudioOnly } from "../actions/videoChatActions";
-import { getLocalStreamPreview, newPeerConnection } from "./webRTC";
+import {
+    setCallRequest,
+    setCallStatus,
+    setOtherUserId,
+    setRemoteStream,
+    clearVideoChat,
+    setAudioOnly,
+} from "../actions/videoChatActions";
+import {
+    getLocalStreamPreview,
+    handleParticipantLeftRoom,
+    handleSignalingData,
+    newPeerConnection,
+    prepareNewPeerConnection,
+} from "./webRTC";
 import SimplePeer from "simple-peer";
+import { initialRoomsUpdate, newRoomCreated, updateActiveRooms } from "./roomHandler";
 
 export interface UserDetails {
     email: string;
@@ -18,7 +42,7 @@ interface PendingInvitation {
     senderId: {
         username: string;
         email: string;
-        _id: string
+        _id: string;
     };
 }
 
@@ -47,7 +71,6 @@ interface GroupChatDetails {
         email: string;
     };
 }
-
 
 interface ServerToClientEvents {
     "friend-invitations": (data: Array<PendingInvitation>) => void;
@@ -92,6 +115,23 @@ interface ServerToClientEvents {
     }) => void;
 
     "notify-chat-left": () => void;
+
+    "room-create": (data: { roomDetails: ActiveRoom }) => void;
+
+    "active-rooms": (data: { activeRooms: ActiveRoom[] }) => void;
+
+    "active-rooms-initial": (data: { activeRooms: ActiveRoom[] }) => void;
+
+    "conn-prepare": (data: { connUserSocketId: string }) => void;
+
+    "conn-init": (data: { connUserSocketId: string }) => void;
+
+    "conn-signal": (data: {
+        connUserSocketId: string;
+        signal: SimplePeer.SignalData;
+    }) => void;
+
+    "room-participant-left": (data: { connUserSocketId: string }) => void;
 }
 
 interface ClientToServerEvents {
@@ -127,13 +167,26 @@ interface ClientToServerEvents {
     }) => void;
 
     "notify-chat-left": (data: { receiverUserId: string }) => void;
+
+    "room-create": () => void;
+
+    "room-join": (data: { roomId: string }) => void;
+
+    "room-leave": (data: { roomId: string }) => void;
+
+    "conn-signal": (data: {
+        signal: SimplePeer.SignalData;
+        connUserSocketId: string;
+    }) => void;
+
+    "conn-init": (data: { connUserSocketId: string }) => void;
 }
 
 let currentPeerConnection: any = null;
 
 const setCurrentPeerConnection = (peerConnection: any) => {
     currentPeerConnection = peerConnection;
-}
+};
 
 let socket: Socket<ServerToClientEvents, ClientToServerEvents>;
 
@@ -156,21 +209,19 @@ const connectWithSocketServer = (userDetails: UserDetails) => {
 
     socket.emit("helloFomClient");
 
-
     socket.on("friend-invitations", (data) => {
         store.dispatch(setPendingInvitations(data) as any);
-    })
-
+    });
 
     socket.on("friends-list", (data) => {
         const typingStatusOfFriends = data.map((friend) => {
             return {
                 userId: friend.id,
-                typing: false
-            }
-        })
+                typing: false,
+            };
+        });
 
-        store.dispatch(setInitialTypingStatus(typingStatusOfFriends))
+        store.dispatch(setInitialTypingStatus(typingStatusOfFriends));
         store.dispatch(setFriends(data) as any);
 
     });
@@ -179,19 +230,16 @@ const connectWithSocketServer = (userDetails: UserDetails) => {
         store.dispatch(setOnlineUsers(data) as any);
     });
 
-
     socket.on("groupChats-list", (data) => {
-        console.log(data)
         store.dispatch(setGroupChatList(data) as any);
-    })
-
+    });
 
     socket.on("direct-chat-history", (data) => {
         const { messages, participants } = data;
 
         const chatDetails = store.getState().chat.chosenChatDetails;
 
-        if(chatDetails) {
+        if (chatDetails) {
             const receiverId = chatDetails.userId;
             const senderId = (store.getState().auth.userDetails as any)._id;
 
@@ -204,19 +252,17 @@ const connectWithSocketServer = (userDetails: UserDetails) => {
                 store.dispatch(setMessages(messages) as any);
             }
         }
-
-    })
+    });
 
     socket.on("group-chat-history", (data) => {
-        console.log(data)
+        console.log(data);
         const { messages, groupChatId } = data;
 
         const groupChatDetails = store.getState().chat.chosenGroupChatDetails;
 
         if (groupChatDetails) {
-
             // only update the store with messages if the group chat is the one we are currently in
-            const isActive = groupChatDetails.groupId === groupChatId
+            const isActive = groupChatDetails.groupId === groupChatId;
 
             if (isActive) {
                 store.dispatch(setMessages(messages) as any);
@@ -229,19 +275,19 @@ const connectWithSocketServer = (userDetails: UserDetails) => {
 
         const chatDetails = store.getState().chat.chosenChatDetails;
 
-        if(chatDetails) {
-             const receiverId = chatDetails.userId;
-             const senderId = (store.getState().auth.userDetails as any)._id;
+        if (chatDetails) {
+            const receiverId = chatDetails.userId;
+            const senderId = (store.getState().auth.userDetails as any)._id;
 
-             const isActive =
-                 participants.includes(receiverId) &&
-                 participants.includes(senderId);
+            const isActive =
+                participants.includes(receiverId) &&
+                participants.includes(senderId);
 
-             if (isActive) {
-                 store.dispatch(addNewMessage(newMessage) as any);
-             }
+            if (isActive) {
+                store.dispatch(addNewMessage(newMessage) as any);
+            }
         }
-    })
+    });
 
     socket.on("group-message", (data) => {
         const { newMessage, groupChatId } = data;
@@ -249,7 +295,7 @@ const connectWithSocketServer = (userDetails: UserDetails) => {
         const chatDetails = store.getState().chat.chosenGroupChatDetails;
 
         if (chatDetails) {
-            const isActive = chatDetails.groupId === groupChatId
+            const isActive = chatDetails.groupId === groupChatId;
 
             if (isActive) {
                 store.dispatch(addNewMessage(newMessage) as any);
@@ -258,54 +304,79 @@ const connectWithSocketServer = (userDetails: UserDetails) => {
     });
 
     socket.on("notify-typing", (data) => {
-        
-        store.dispatch(setTyping({typing: data.typing, userId: data.senderUserId}) as any);
+        store.dispatch(
+            setTyping({ typing: data.typing, userId: data.senderUserId }) as any
+        );
     });
 
-
     socket.on("call-request", (data) => {
-        console.log(data);
         store.dispatch(setCallRequest(data) as any);
-    })
-
+    });
 
     socket.on("notify-chat-left", () => {
         store.dispatch(clearVideoChat("User left the chat...!") as any);
-    })
+    });
+
+    // rooms
+    socket.on("room-create", (data: { roomDetails: ActiveRoom }) => {
+        newRoomCreated(data);
+    });
+
+    socket.on("active-rooms", (data: { activeRooms: ActiveRoom[] }) => {
+        updateActiveRooms(data);
+    });
+
+    socket.on("active-rooms-initial", (data: { activeRooms: ActiveRoom[] }) => {
+        initialRoomsUpdate(data);
+    });
+
+    socket.on("conn-prepare", (data: { connUserSocketId: string }) => {
+        const { connUserSocketId } = data;
+        // prepare new peer connection for the connUserSocketId joining the room
+        prepareNewPeerConnection(connUserSocketId, false);
+
+        socket.emit("conn-init", { connUserSocketId: connUserSocketId });
+    });
+
+    socket.on("conn-init", (data: { connUserSocketId: string }) => {
+        const { connUserSocketId } = data;
+        prepareNewPeerConnection(connUserSocketId, true);
+    });
+
+    socket.on(
+        "conn-signal",
+        (data: { connUserSocketId: string; signal: SimplePeer.SignalData }) => {
+            handleSignalingData(data);
+        }
+    );
+
+    socket.on("room-participant-left", (data: { connUserSocketId: string }) => {
+        handleParticipantLeftRoom(data);
+    });
 };
 
-
-const sendDirectMessage = (data: {message: string, receiverUserId: string}) => {
-    socket.emit("direct-message", data)
-}
-
-
-const sendGroupMessage = (data: {
+const sendDirectMessage = (data: {
     message: string;
-    groupChatId: string;
+    receiverUserId: string;
 }) => {
+    socket.emit("direct-message", data);
+};
+
+const sendGroupMessage = (data: { message: string; groupChatId: string }) => {
     socket.emit("group-message", data);
 };
 
-
-const fetchDirectChatHistory = (data: {
-    receiverUserId: string;
-}) => {
+const fetchDirectChatHistory = (data: { receiverUserId: string }) => {
     socket.emit("direct-chat-history", data);
 };
-
 
 const fetchGroupChatHistory = (data: { groupChatId: string }) => {
     socket.emit("group-chat-history", data);
 };
 
-const notifyTyping = (data: {
-    receiverUserId: string;
-    typing: boolean;
-}) => {
+const notifyTyping = (data: { receiverUserId: string; typing: boolean }) => {
     socket.emit("notify-typing", data);
 };
-
 
 const callRequest = (data: {
     receiverUserId: string;
@@ -313,7 +384,7 @@ const callRequest = (data: {
     audioOnly: boolean;
 }) => {
     // socket.emit("call-request", data);
-    
+
     const peerConnection = () => {
         const peer = newPeerConnection(true);
 
@@ -345,22 +416,20 @@ const callRequest = (data: {
                 peer.signal(data.signal);
             }
         });
-    }
+    };
 
     getLocalStreamPreview(data.audioOnly, () => {
         peerConnection();
-        store.dispatch(setCallStatus("ringing") as any)
+        store.dispatch(setCallStatus("ringing") as any);
         store.dispatch(setAudioOnly(data.audioOnly) as any);
-    })
+    });
 };
 
 const callResponse = (data: {
     receiverUserId: string;
     accepted: boolean;
-    audioOnly : boolean;
+    audioOnly: boolean;
 }) => {
-
-
     socket.emit("call-response", data);
 
     if (!data.accepted) {
@@ -387,22 +456,56 @@ const callResponse = (data: {
         });
 
         peer.signal(store.getState().videoChat.callRequest?.signal!);
-    }
+    };
 
     getLocalStreamPreview(data.audioOnly, () => {
         peerConnection();
         store.dispatch(setCallRequest(null) as any);
         store.dispatch(setAudioOnly(data.audioOnly) as any);
     });
-
-}
+};
 
 const notifyChatLeft = (receiverUserId: string) => {
-
     socket.emit("notify-chat-left", {
         receiverUserId,
     });
+};
 
-}
+const createNewRoom = () => {
+    socket.emit("room-create");
+};
 
-export { connectWithSocketServer, sendDirectMessage, fetchDirectChatHistory, notifyTyping, callRequest, callResponse, notifyChatLeft, currentPeerConnection, setCurrentPeerConnection, sendGroupMessage, fetchGroupChatHistory };
+const joinRoom = (data: { roomId: string }) => {
+    socket.emit("room-join", data);
+};
+
+const leaveRoom = (data: { roomId: string }) => {
+    socket.emit("room-leave", data);
+};
+
+
+const signalPeerData = (data: {
+    signal: SimplePeer.SignalData;
+    connUserSocketId: string;
+}) => {
+    socket.emit("conn-signal", data);
+};
+
+export {
+    connectWithSocketServer,
+    sendDirectMessage,
+    fetchDirectChatHistory,
+    notifyTyping,
+    callRequest,
+    callResponse,
+    notifyChatLeft,
+    currentPeerConnection,
+    setCurrentPeerConnection,
+    sendGroupMessage,
+    fetchGroupChatHistory,
+
+    createNewRoom,
+    joinRoom,
+    leaveRoom,
+    signalPeerData
+};

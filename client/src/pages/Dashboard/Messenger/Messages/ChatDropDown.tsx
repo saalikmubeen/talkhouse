@@ -35,13 +35,13 @@ export default function ChatDropDown() {
         setIsDialogOpen(false);
     };
 
-     const handleParticipantsOpenDialog = () => {
-         setParticipantsDialogOpen(true);
-     };
+    const handleParticipantsOpenDialog = () => {
+        setParticipantsDialogOpen(true);
+    };
 
-     const handleParticipantsCloseDialog = () => {
-         setParticipantsDialogOpen(false);
-     };
+    const handleParticipantsCloseDialog = () => {
+        setParticipantsDialogOpen(false);
+    };
 
     const handleLeaveGroup = () => {
         

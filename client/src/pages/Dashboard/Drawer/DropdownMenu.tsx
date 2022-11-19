@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -6,12 +6,15 @@ import { IconButton } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { logoutUser } from "../../../actions/authActions";
 import { useAppSelector } from "../../../store";
+import { setAudioOnlyRoom } from "../../../actions/roomActions";
+import RoomParticipantsDialog from "./RoomParticipantsDialog";
 
 export default function DropDownMenu() {
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const dispatch = useDispatch();
-    const userDetails = useAppSelector(state => state.auth.userDetails)
+    const { auth: { userDetails }, room: { audioOnly, roomDetails, isUserInRoom, } } = useAppSelector(state => state)
 
     const handleMenuClose = () => {
         setAnchorEl(null);
@@ -21,6 +24,18 @@ export default function DropDownMenu() {
         dispatch(logoutUser());
     }
 
+
+    const handleAudioOnlyChange = () => {
+        dispatch(setAudioOnlyRoom(!audioOnly))
+    }
+
+    const handleOpenDialog = () => {
+        setIsDialogOpen(true);
+    };
+
+    const handleCloseDialog = () => {
+        setIsDialogOpen(false);
+    };
 
     return (
         <div>
@@ -39,9 +54,29 @@ export default function DropDownMenu() {
                     "aria-labelledby": "basic-button",
                 }}
             >
-                <MenuItem onClick={handleClick}>Logout</MenuItem>
-                <MenuItem> {userDetails?.username }</MenuItem>
+                <MenuItem onClick={handleAudioOnlyChange}>
+                    {audioOnly
+                        ? "Audio Only Enabled (for Rooms)"
+                        : "Audio Only Disabled (for Rooms)"}
+                </MenuItem>
+                {isUserInRoom && roomDetails && (
+                    <MenuItem onClick={handleOpenDialog}>
+                        Active Room ({roomDetails.roomCreator.username})
+                    </MenuItem>
+                )}
+                <MenuItem onClick={handleClick}>
+                    Logout ({userDetails?.username})
+                </MenuItem>
             </Menu>
+
+            {roomDetails && userDetails && (
+                <RoomParticipantsDialog
+                    isDialogOpen={isDialogOpen}
+                    closeDialogHandler={handleCloseDialog}
+                    roomDetails={roomDetails}
+                    currentUserId={userDetails._id}
+                />
+            )}
         </div>
     );
 }

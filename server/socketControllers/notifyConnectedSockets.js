@@ -5,6 +5,7 @@ const User = require("../models/User");
 const GroupChat = require("../models/GroupChat");
 const { getActiveConnections } = require("../socket/connectedUsers");
 const  { getServerSocketInstance } = require("../socket/connectedUsers");
+const { getActiveRooms } = require("../socket/activeRooms");
 
 
 const updateUsersInvitations = async (userId, isNew) => {
@@ -252,6 +253,56 @@ const sendNewGroupMessage = async (groupChatId, newMessage) => {
 };
 
 
+const updateRooms = (toSpecifiedSocketId = null) => {
+    const io = getServerSocketInstance();
+    const activeRooms = getActiveRooms();
+
+    if (toSpecifiedSocketId) {
+        io.to(toSpecifiedSocketId).emit("active-rooms", {
+            activeRooms,
+        });
+    } else {
+        io.emit("active-rooms", {
+            activeRooms,
+        });
+    }
+};
+
+
+const initialRoomsUpdate = async (userId, socketId) => {
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+        return;
+    }
+
+    const io = getServerSocketInstance();
+    const activeRooms = getActiveRooms();
+
+    const rooms = [];
+
+    activeRooms.forEach((room) => {
+        const isRoomCreatedByMe = room.roomCreator.userId === userId;
+
+        if (isRoomCreatedByMe) {
+            rooms.push(room);
+        } else {
+            user.friends.forEach((f) => {
+                if (f.toString() === room.roomCreator.userId.toString()) {
+                    rooms.push(room);
+                }
+            });
+        }
+    });
+
+    io.to(socketId).emit("active-rooms-initial", {
+        activeRooms: rooms
+    });
+
+};
+
+
 
 module.exports = {
     updateUsersInvitations,
@@ -259,5 +310,7 @@ module.exports = {
     updateUsersGroupChatList,
     updateChatHistory,
     sendNewDirectMessage,
-    sendNewGroupMessage
+    sendNewGroupMessage,
+    updateRooms,
+    initialRoomsUpdate
 }

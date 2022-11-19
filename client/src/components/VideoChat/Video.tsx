@@ -2,8 +2,13 @@ import React, { useEffect, useRef } from "react";
 import { styled } from "@mui/system";
 
 const MainContainer = styled("div")({
+    // height: "50%",
+    // width: "100%",
+    // backgroundColor: "black",
+    // borderRadius: "8px",
+
     height: "50%",
-    width: "100%",
+    width: "50%",
     backgroundColor: "black",
     borderRadius: "8px",
 });

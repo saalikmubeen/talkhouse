@@ -12,7 +12,7 @@ const Wrapper = styled("div")({
 });
 
 const Dashboard = () => {
-    const {auth: {userDetails}, videoChat: {localStream}} = useAppSelector((state) => state);
+    const {auth: {userDetails}, videoChat: {localStream}, room: { isUserInRoom, localStreamRoom }} = useAppSelector((state) => state);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -30,7 +30,7 @@ const Dashboard = () => {
 
     return (
         <Wrapper>
-            <ResponsiveDrawer localStream={localStream}/>
+            <ResponsiveDrawer localStream={localStream || localStreamRoom} isUserInRoom={isUserInRoom} />
         </Wrapper>
     );
 };

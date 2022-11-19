@@ -14,7 +14,6 @@ const requireAuth = (req, res, next) => {
         token = token.split(" ")[1];
 
         const decoded = jwt.verify(token, config.JWT_SECRET);
-        console.log(decoded)
         req.user = decoded;
     } catch (err) {
         return res.status(401).send("Invalid Token");

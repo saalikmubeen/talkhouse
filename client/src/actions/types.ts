@@ -21,7 +21,7 @@ export enum actionTypes {
     addNewMessage,
     resetChat,
     setChosenGroupChatDetails,
-    
+
     setTyping,
     setInitialTypingStatus,
 
@@ -33,9 +33,17 @@ export enum actionTypes {
     setScreenSharing,
     setCallRequest,
     setCallStatus,
-    resetVideoChatState
-}
+    resetVideoChatState,
 
+    openRoom,
+    setRoomDetails,
+    setActiveRooms,
+    setLocalStreamRoom,
+    setRemoteStreams,
+    setAudioOnlyRoom,
+    setScreenSharingStreamRoom,
+    setIsUserJoinedWithAudioOnly,
+}
 
 export interface CurrentUser {
     _id: string;
@@ -68,24 +76,22 @@ interface AuthLoadingAction {
 }
 
 interface ShowAlertAction {
-    type: actionTypes.showAlert,
-    payload: string,
+    type: actionTypes.showAlert;
+    payload: string;
 }
 
 interface HideAlertAction {
-    type: actionTypes.hideAlert
+    type: actionTypes.hideAlert;
 }
-
 
 export interface PendingInvitation {
     _id: string;
     senderId: {
         username: string;
         email: string;
-        _id: string
+        _id: string;
     };
 }
-
 
 export interface Friend {
     id: string;
@@ -97,7 +103,6 @@ export interface OnlineUser {
     userId: string;
     socketId: string;
 }
-
 
 export interface GroupChatDetails {
     groupId: string;
@@ -114,18 +119,15 @@ export interface GroupChatDetails {
     };
 }
 
-
-interface SetPendingInvitationAction  {
-    type: actionTypes.setPendingInvitations,
-    payload: Array<PendingInvitation>
+interface SetPendingInvitationAction {
+    type: actionTypes.setPendingInvitations;
+    payload: Array<PendingInvitation>;
 }
-
 
 interface SetFriends {
     type: actionTypes.setFriends;
     payload: Array<Friend>;
 }
-
 
 interface SetOnlineUsers {
     type: actionTypes.setOnlineUsers;
@@ -133,16 +135,16 @@ interface SetOnlineUsers {
 }
 
 export interface SetGroupChatList {
-    type: actionTypes.setGroupChatList,
-    payload: Array<GroupChatDetails>
+    type: actionTypes.setGroupChatList;
+    payload: Array<GroupChatDetails>;
 }
 
 export interface SetChosenChatDetails {
-    type: actionTypes.setChosenChatDetails,
+    type: actionTypes.setChosenChatDetails;
     payload: {
-        userId: string,
-        username: string
-    }
+        userId: string;
+        username: string;
+    };
 }
 
 export interface SetChosenGroupChatDetails {
@@ -151,7 +153,7 @@ export interface SetChosenGroupChatDetails {
 }
 
 export interface ResetChat {
-    type: actionTypes.resetChat
+    type: actionTypes.resetChat;
 }
 
 export interface ResetFriends {
@@ -213,15 +215,15 @@ interface SetCallRequest {
         audioOnly: boolean;
         callerUserId: string;
         signal: SimplePeer.SignalData;
-    }
+    };
 }
 
-export type CallStatus = "ringing" | "accepted" | "rejected" | "left" | null 
+export type CallStatus = "ringing" | "accepted" | "rejected" | "left" | null;
 export interface SetCallStatus {
     type: actionTypes.setCallStatus;
     payload: {
         status: CallStatus;
-    }
+    };
 }
 
 export interface ClearVideChatState {
@@ -232,7 +234,7 @@ interface setOtherUserId {
     type: actionTypes.setOtherUserId;
     payload: {
         otherUserId: string | null;
-    }
+    };
 }
 
 interface setScreenSharingStream {
@@ -240,17 +242,93 @@ interface setScreenSharingStream {
     payload: {
         stream: MediaStream | null;
         isScreenSharing: boolean;
-    }
+    };
 }
 
 interface SetAudioOnly {
     type: actionTypes.setAudioOnly;
     payload: {
         audioOnly: boolean;
-    }
+    };
 }
 
-export type AuthActions = AuthSuccessAction | AuthErrorAction | LogoutAction | AuthLoadingAction; 
+export type ActiveRoom = {
+    roomCreator: {
+        userId: string;
+        username: string;
+        socketId: string;
+    };
+    participants: {
+        userId: string;
+        socketId: string;
+        username: string;
+    }[];
+    roomId: string;
+};
+
+interface SetIsUserJoinedOnlyWithAudio {
+    type: actionTypes.setIsUserJoinedWithAudioOnly;
+    payload: {
+        isUserJoinedWithOnlyAudio: boolean;
+    };
+}
+
+interface SetScreenSharingStreamRoom {
+    type: actionTypes.setScreenSharingStreamRoom;
+    payload: {
+        isScreenSharingActive: boolean;
+        screenSharingStream: MediaStream | null;
+    };
+}
+
+interface SetRemoteStreams {
+    type: actionTypes.setRemoteStreams;
+    payload: {
+        remoteStreams: MediaStream[];
+    };
+}
+
+interface SetAudioOnlyRoom {
+    type: actionTypes.setAudioOnlyRoom;
+    payload: {
+        audioOnly: boolean;
+    };
+}
+
+interface SetLocalStreamRoom {
+    type: actionTypes.setLocalStreamRoom;
+    payload: {
+        localStreamRoom: MediaStream | null;
+    };
+}
+
+interface SetActiveRooms {
+    type: actionTypes.setActiveRooms;
+    payload: {
+        activeRooms: ActiveRoom[];
+    };
+}
+
+interface SetOpenRoom {
+    type: actionTypes.openRoom;
+    payload: {
+        isUserRoomCreator: boolean;
+        isUserInRoom: boolean;
+    };
+}
+
+interface SetRoomDetails {
+    type: actionTypes.setRoomDetails;
+    payload: {
+        roomDetails: any;
+    };
+}
+
+export type AuthActions =
+    | AuthSuccessAction
+    | AuthErrorAction
+    | LogoutAction
+    | AuthLoadingAction;
 export type AlertActions = ShowAlertAction | HideAlertAction;
 export type FriendsActions =
     | SetPendingInvitationAction
@@ -258,6 +336,30 @@ export type FriendsActions =
     | SetOnlineUsers
     | SetGroupChatList
     | ResetFriends;
-export type ChatActions = SetChosenChatDetails | SetChosenGroupChatDetails | SetMessages | AddNewMessage | SetTyping | SetInitialTypingStatus | ResetChat;
-export type VideoChatActions = SetLocalStream | SetRemoteStream | SetCallRequest | SetCallStatus | 
-            ClearVideChatState | setOtherUserId | setScreenSharingStream | SetAudioOnly;
+export type ChatActions =
+    | SetChosenChatDetails
+    | SetChosenGroupChatDetails
+    | SetMessages
+    | AddNewMessage
+    | SetTyping
+    | SetInitialTypingStatus
+    | ResetChat;
+export type VideoChatActions =
+    | SetLocalStream
+    | SetRemoteStream
+    | SetCallRequest
+    | SetCallStatus
+    | ClearVideChatState
+    | setOtherUserId
+    | setScreenSharingStream
+    | SetAudioOnly;
+
+export type RoomActions =
+    | SetIsUserJoinedOnlyWithAudio
+    | SetActiveRooms
+    | SetAudioOnlyRoom
+    | SetLocalStreamRoom
+    | SetRemoteStreams
+    | SetOpenRoom
+    | SetRoomDetails
+    | SetScreenSharingStreamRoom;

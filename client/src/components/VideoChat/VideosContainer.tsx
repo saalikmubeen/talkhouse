@@ -17,23 +17,47 @@ const VideosContainer: React.FC<{
 }> = ({
     isRoomMinimized
 }) => {
-    const { localStream, callStatus, remoteStream, screenSharingStream } =
-        useAppSelector((state) => state.videoChat);
+    const {
+        videoChat: {
+            localStream,
+            callStatus,
+            remoteStream,
+            screenSharingStream,
+        },
+        room: {
+            localStreamRoom,
+            remoteStreams,
+            screenSharingStream: screenSharingStreamRoom,
+        },
+    } = useAppSelector((state) => state);
 
     const matches = useMediaQuery("(max-width:800px)");
 
+
     return (
-        <MainContainer sx={{
-            ...(matches && isRoomMinimized && {
-                height: "100%",
-                width: "85%",
-                flexDirection: "column",
-            }),
-        }}>
+        <MainContainer
+            sx={{
+                ...(matches &&
+                    isRoomMinimized && {
+                        height: "100%",
+                        width: "85%",
+                        flexDirection: "column",
+                    }),
+            }}
+        >
             {localStream && (
                 <Video
                     stream={
                         screenSharingStream ? screenSharingStream : localStream
+                    }
+                    isLocalStream={true}
+                />
+            )}
+
+            {localStreamRoom && (
+                <Video
+                    stream={
+                        screenSharingStreamRoom ? screenSharingStreamRoom : localStreamRoom
                     }
                     isLocalStream={true}
                 />
@@ -48,7 +72,7 @@ const VideosContainer: React.FC<{
                         width: "100%",
                         display: "flex",
                         alignItems: "center",
-                        justifyContent: "center"
+                        justifyContent: "center",
                     }}
                 >
                     {callStatus === "ringing"
@@ -60,6 +84,10 @@ const VideosContainer: React.FC<{
             {remoteStream && (
                 <Video stream={remoteStream} isLocalStream={false} />
             )}
+
+            {remoteStreams.map((stream) => (
+                <Video stream={stream} key={stream.id} isLocalStream={false} />
+            ))}
         </MainContainer>
     );
 };

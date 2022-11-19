@@ -11,6 +11,11 @@ const notifyChatLeft = require("../socketControllers/notifyChatLeft");
 const notifyTypingHandler = require("../socketControllers/notifyTypingHandler");
 const { setServerSocketInstance, getOnlineUsers } = require("./connectedUsers");
 const groupChatHistoryHandler = require("../socketControllers/groupChatHistoryHandler");
+const roomJoinHandler = require("../socketControllers/room/roomJoinHandler");
+const roomCreateHandler = require("../socketControllers/room/roomCreateHandler");
+const roomLeaveHandler = require("../socketControllers/room/roomLeaveHandler");
+const roomSignalingDataHandler = require("../socketControllers/room/roomSignalingDataHandler");
+const roomInitializeConnectionHandler = require("../socketControllers/room/roomInitializeConnectionHandler");
 
 
 const createSocketServer = (server) => {
@@ -65,6 +70,29 @@ const createSocketServer = (server) => {
 
         socket.on("notify-chat-left", (data) => {
             notifyChatLeft(socket, data);
+        });
+
+
+        // rooms 
+
+        socket.on("room-create", () => {
+            roomCreateHandler(socket);
+        });
+
+        socket.on("room-join", (data) => {
+            roomJoinHandler(socket, data);
+        });
+
+        socket.on("room-leave", (data) => {
+            roomLeaveHandler(socket, data);
+        });
+
+        socket.on("conn-init", (data) => {
+            roomInitializeConnectionHandler(socket, data);
+        });
+
+        socket.on("conn-signal", (data) => {
+            roomSignalingDataHandler(socket, data);
         });
 
         socket.on("disconnect", () => {
