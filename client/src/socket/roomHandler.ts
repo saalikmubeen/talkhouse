@@ -1,4 +1,3 @@
-
 import {
     setOpenRoom,
     setRoomDetails,
@@ -33,12 +32,16 @@ export const newRoomCreated = (data: { roomDetails: ActiveRoom }) => {
 
 export const updateActiveRooms = (data: { activeRooms: ActiveRoom[] }) => {
     const { activeRooms } = data;
-    console.log("Active ROOMS", activeRooms)
+    console.log("Active ROOMS", activeRooms);
 
-    const friends = store.getState().friends.friends;
+    const {
+        friends: { friends },
+        auth: { userDetails },
+        room: { roomDetails },
+    } = store.getState();
     const rooms: ActiveRoom[] = [];
 
-    const userId = store.getState().auth.userDetails?._id;
+    const userId = userDetails?._id;
 
     activeRooms.forEach((room: ActiveRoom) => {
         const isRoomCreatedByMe = room.roomCreator.userId === userId;
@@ -52,11 +55,15 @@ export const updateActiveRooms = (data: { activeRooms: ActiveRoom[] }) => {
                 }
             });
         }
+
+        if(room.roomId === roomDetails?.roomId) {
+            store.dispatch(setRoomDetails(room) as any);
+        }
+        
     });
 
     store.dispatch(setActiveRooms(rooms) as any);
 };
-
 
 export const initialRoomsUpdate = (data: { activeRooms: ActiveRoom[] }) => {
     const { activeRooms } = data;
@@ -95,7 +102,7 @@ export const leaveRoom = () => {
     store.dispatch(setRemoteStreams([]) as any);
     closeAllConnections();
 
-    if(roomId) {
+    if (roomId) {
         socketConnection.leaveRoom({ roomId });
     }
     store.dispatch(setRoomDetails(null) as any);
