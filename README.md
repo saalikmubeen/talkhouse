@@ -35,6 +35,9 @@ WebRTC based peer to peer video calling and messaging web app build with MERN st
 *  Remove friend, ability to unfriend someone
 * **`Talkhouse Spaces`** like Twitter spaces. You can host a space and any of your friends can join that space.
 
+The `talkhouse spaces` are implemented using MESH topology to establish a peer-to-peer network between every person or client joining the space.
+i.e, every person maintains a p2p connection with every other person in the room. 
+
 
 # Installation
 
