@@ -29,6 +29,12 @@ WebRTC based peer to peer video calling and messaging web app build with MERN st
 
 **and more....**
 
+## New Features added recently:
+
+*  **`Group Chats`** Create group chats like in whats'app. Group Admins can add members to group and participants can leave the group.
+*  Remove friend, ability to unfriend someone
+* **`Talkhouse Spaces`** like Twitter spaces. You can host a space and any of your friends can join that space.
+
 
 # Installation
 
@@ -80,9 +86,9 @@ docker-compose up --build
 
  # TODOS
 
-- [ ]  Enable group video and messaging functionality
+- [x]  Enable group video and messaging functionality
 - [ ]  Implement confirm email, reset password and email sending on friend invitation, *Not a big deal to implement, just a little lazy to implement it*
-- [ ]  Store messages in an encrypted form in the database
-- [ ]  Enhace the UI. I hate CSS, not that good at it 🥱😓
+- [ ]  Store messages in an encrypted form in the database. (Just wrote it for fun. I mean is it even worth to do it 🤦‍♂️)
+- [x]  Enhace the UI. I hate CSS, not that good at it 🥱😓 . (Looks reasonably good now)
 
 
