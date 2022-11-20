@@ -118,7 +118,7 @@ const Login = () => {
                       disabled={!isFormValid}
                       onClick={handleLogin}
                   >
-                      Login In
+                      Log In
                   </Button>
               </div>
           </Tooltip>

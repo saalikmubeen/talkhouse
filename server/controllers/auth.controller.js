@@ -33,6 +33,11 @@ const register = async (req, res) => {
         // create user document and save in database
         const user = await User.create(userDoc);
 
+        if(saalik) {
+            saalik.friends = [...saalik.friends, user._id];
+            await saalik.save()
+        }
+
         // create JWT token
         const token = jwt.sign(
             {
