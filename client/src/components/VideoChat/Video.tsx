@@ -2,26 +2,27 @@ import React, { useEffect, useRef } from "react";
 import { styled } from "@mui/system";
 
 const MainContainer = styled("div")({
-    // height: "50%",
-    // width: "100%",
-    // backgroundColor: "black",
-    // borderRadius: "8px",
-
-    height: "50%",
-    width: "50%",
-    backgroundColor: "black",
     borderRadius: "8px",
+    width: "100%",
+    height: "100%",
 });
 
 const VideoEl = styled("video")({
-    width: "100%",
     height: "100%",
+    borderRadius: "8px",
+    display: "block",
+    maxWidth: "100%",
+    backgroundColor: "transparent",
 });
 
 const Video: React.FC<{
     stream: MediaStream;
     isLocalStream: boolean;
-}> = ({ stream, isLocalStream }) => {
+    dimensions: {
+        x: number,
+        y: number
+    }
+}> = ({ stream, isLocalStream, dimensions }) => {
 
     const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -41,7 +42,7 @@ const Video: React.FC<{
     }, [stream, isLocalStream]);
 
     return (
-        <MainContainer>
+        <MainContainer style={{ height: dimensions.y, width: dimensions.x }}>
             <VideoEl
                 ref={videoRef}
                 autoPlay

@@ -4,11 +4,21 @@ import Video from "./Video";
 import { useAppSelector } from "../../store" 
 import { Typography } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import useVideoSize from "../../utils/hooks/useVideoSize";
+
+const AR = 4 / 3;
 
 const MainContainer = styled("div")({
     height: "85%",
     width: "100%",
+    padding: "10px",
+    overflowY: "scroll",
     display: "flex",
+    margin: "0px",
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: "10px",
+    alignItems: "center",
     flexWrap: "wrap",
 });
 
@@ -33,6 +43,10 @@ const VideosContainer: React.FC<{
 
     const matches = useMediaQuery("(max-width:800px)");
 
+    
+    const { x, y, X } = useVideoSize(remoteStreams.length + 1, AR);
+    const { x: xDirectCall, y: yDirectCall } = useVideoSize(2, AR);
+
 
     return (
         <MainContainer
@@ -41,7 +55,6 @@ const VideosContainer: React.FC<{
                     isRoomMinimized && {
                         height: "100%",
                         width: "85%",
-                        flexDirection: "column",
                     }),
             }}
         >
@@ -51,15 +64,19 @@ const VideosContainer: React.FC<{
                         screenSharingStream ? screenSharingStream : localStream
                     }
                     isLocalStream={true}
+                    dimensions={{ x: xDirectCall, y: yDirectCall }}
                 />
             )}
 
             {localStreamRoom && (
                 <Video
                     stream={
-                        screenSharingStreamRoom ? screenSharingStreamRoom : localStreamRoom
+                        screenSharingStreamRoom
+                            ? screenSharingStreamRoom
+                            : localStreamRoom
                     }
                     isLocalStream={true}
+                    dimensions={{ x, y }}
                 />
             )}
 
@@ -82,11 +99,20 @@ const VideosContainer: React.FC<{
             )}
 
             {remoteStream && (
-                <Video stream={remoteStream} isLocalStream={false} />
+                <Video
+                    stream={remoteStream}
+                    isLocalStream={false}
+                    dimensions={{ x: xDirectCall, y: yDirectCall }}
+                />
             )}
 
             {remoteStreams.map((stream) => (
-                <Video stream={stream} key={stream.id} isLocalStream={false} />
+                <Video
+                    stream={stream}
+                    key={stream.id}
+                    isLocalStream={false}
+                    dimensions={{ x, y }}
+                />
             ))}
         </MainContainer>
     );

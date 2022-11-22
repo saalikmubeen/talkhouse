@@ -5,6 +5,8 @@ import ResizeRoomButton from "./ResizeRoomButton";
 import VideosContainer from "./VideosContainer";
 import RoomButtons from "./RoomButtons";
 
+const drawerWidth = 240;
+
 const MainContainer = styled("div")({
     position: "absolute",
     borderRadius: "8px",
@@ -17,13 +19,13 @@ const MainContainer = styled("div")({
 });
 
 const fullScreenRoomStyle = {
-    width: "100%",
     height: "100vh",
     zIndex: 200,
 };
 
 const minimizedRoomStyle = {
-    bottom: "0px",
+    zIndex: 200,
+    top: "0px",
     right: "0px",
     width: "30%",
     height: "40vh",
@@ -40,15 +42,19 @@ const VideoChat = () => {
 
     return (
         <MainContainer
-            style={
-                isRoomMinimized
+            sx={{
+                ...(isRoomMinimized
                     ? {
                           ...minimizedRoomStyle,
                           ...(matches && { width: "70%" }),
                       }
-                    : fullScreenRoomStyle
-            }
-            sx={{
+                    : {
+                          ...fullScreenRoomStyle,
+                          width: {
+                              xs: `calc(100vw)`,
+                              sm: `calc(100vw - ${drawerWidth}px)`,
+                          },
+                      }),
                 ...(matches &&
                     isRoomMinimized && {
                         flexDirection: "row",
