@@ -89,16 +89,17 @@ const Register = () => {
                 Create an account to get started.
             </Typography>
 
-            <Wrapper>
-                <Label>Username</Label>
-                <Input
-                    type="email"
-                    placeholder="Enter your username"
-                    name="username"
-                    value={credentials.username}
-                    onChange={handleChange}
-                />
-            </Wrapper>
+        <Wrapper>
+    <Label>Username</Label>
+    <Input
+        type="text" // Change "email" to "text"
+        placeholder="Enter your username"
+        name="username"
+        value={credentials.username}
+        onChange={handleChange}
+    />
+</Wrapper>
+
 
             <Wrapper>
                 <Label>Email</Label>
