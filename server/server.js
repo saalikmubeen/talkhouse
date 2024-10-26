@@ -14,15 +14,15 @@ const { createSocketServer } = require('./socket/socketServer');
 
 const PORT = process.env.PORT || 5000;
 
-const vapidKeys = webPush.generateVAPIDKeys();
+// const vapidKeys = webPush.generateVAPIDKeys();
 // console.log(vapidKeys.publicKey); // Used in the frontend
 // console.log(vapidKeys.privateKey); // Kept secret on your server
-console.log(JSON.stringify(vapidKeys));
+// console.log(JSON.stringify(vapidKeys));
 
 webPush.setVapidDetails(
   process.env.WEB_PUSH_CONTACT,
-  vapidKeys.publicKey, // process.env.PUBLIC_VAPID_KEY,
-  vapidKeys.privateKey //  process.env.PRIVATE_VAPID_KEY
+  process.env.PUBLIC_VAPID_KEY, // vapidKeys.publicKey,
+  process.env.PRIVATE_VAPID_KEY // vapidKeys.privateKey
 );
 
 const app = express();
