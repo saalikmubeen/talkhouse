@@ -4,7 +4,8 @@ import {
 } from './api/api';
 
 const convertedVapidKey = urlBase64ToUint8Array(
-  process.env.REACT_APP_VAPID_PUBLIC_KEY || ''
+  // process.env.REACT_APP_VAPID_PUBLIC_KEY || ''
+  'BF2mnXpqC9uNzj3ivnclQQtKSSxNGYixWb7z3f8kB2SGh1Qgmdhw7sZwg8KDKntP7jGOlU2H_pPFPj7qA2wuwBE'
 );
 
 /**
