@@ -204,9 +204,9 @@ const setCurrentPeerConnection = (peerConnection: any) => {
 
 let socket: Socket<ServerToClientEvents, ClientToServerEvents>;
 
-// const SERVER_URL = 'http://localhost:5000';
+const SERVER_URL = 'http://localhost:5000';
 // const SERVER_URL = "https://saliks-discord.herokuapp.com/";
-const SERVER_URL = 'https://talkhouse-server.onrender.com/';
+// const SERVER_URL = 'https://talkhouse-server.onrender.com/';
 
 const connectWithSocketServer = (userDetails: UserDetails) => {
   socket = io(SERVER_URL, {
