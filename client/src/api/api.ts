@@ -242,12 +242,7 @@ export const deleteGroup = async (data: DeleteGroupArgs) => {
 export const saveuserSubscription = async (
   subscription: PushSubscription
 ) => {
-  try {
-    const res = await api.post('/api/auth/subscribe', subscription);
-    return res.data;
-  } catch (err: any) {
-    console.error('Error saving subscription', err);
-  }
+  return api.post('/api/auth/subscribe', subscription);
 };
 
 export const removeUserSubscription = (

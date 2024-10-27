@@ -12,6 +12,7 @@ import RoomParticipantsDialog from './RoomParticipantsDialog';
 import {
   askPermission,
   subscribeUserToPush,
+  unsubscribeUserToPush,
 } from '../../../notifications';
 
 export default function DropDownMenu() {
@@ -47,20 +48,51 @@ export default function DropDownMenu() {
     setIsDialogOpen(false);
   };
 
-  const handleToggle = () => {
-    askPermission().then((result) => {
-      setChecked(result);
-
-      if (result) {
-        subscribeUserToPush();
-      }
-    });
+  const handleToggle = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    checked: boolean
+  ) => {
+    // If the user has checked the notification
+    if (event.target.checked) {
+      // Ask for permission for notifications
+      askPermission().then((result) => {
+        // if the user has granted permission to notifications, subscribe the user to push notifications
+        if (result) {
+          subscribeUserToPush(() => {
+            setChecked(true);
+          });
+        } else {
+          // if the user has denied permission to notifications, ask the user to enable notifications from the browser settings
+          alert(
+            "Can't turn on the notifications. First enable notifications from the browser settings and then try again!"
+          );
+        }
+      });
+    } else {
+      unsubscribeUserToPush(() => {
+        setChecked(false);
+      });
+    }
   };
 
   useEffect(() => {
-    if (Notification.permission === 'granted') {
-      setChecked(true);
-    }
+    navigator.serviceWorker.ready.then(function (registration) {
+      registration.pushManager
+        .getSubscription()
+        .then(function (existingSubscription) {
+          // console.log('existingSubscription', existingSubscription);
+          // if both the user has granted permission to notifications and the user has an existing subscription
+          // set the checked state to true, else set it to false
+          if (
+            Notification.permission === 'granted' &&
+            existingSubscription
+          ) {
+            setChecked(true);
+          } else {
+            setChecked(false);
+          }
+        });
+    });
   }, []);
 
   return (

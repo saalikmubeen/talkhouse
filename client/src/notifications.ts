@@ -7,9 +7,6 @@ const convertedVapidKey = urlBase64ToUint8Array(
   process.env.REACT_APP_VAPID_PUBLIC_KEY || ''
 );
 
-/**
- * conforms to both Apis (promise or callback)
- */
 export function askPermission() {
   return new Promise(function (resolve, reject) {
     const permissionResult = Notification.requestPermission(function (
@@ -23,7 +20,7 @@ export function askPermission() {
   }).then((result) => {
     if (result !== 'granted') {
       alert(
-        'Notification permission denied\nIf it was by mistake, turn it on from the settings'
+        "Can't turn on the notifications. First enable notifications from the browser settings and then try again!"
       );
       return false;
     }
@@ -31,7 +28,7 @@ export function askPermission() {
   });
 }
 
-export function subscribeUserToPush() {
+export function subscribeUserToPush(callback: () => void) {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.ready.then(function (registration) {
       if (!registration.pushManager) {
@@ -54,7 +51,11 @@ export function subscribeUserToPush() {
               .subscribe(subscribeOptions)
               .then(function (newSubscription) {
                 console.log('New push subscription added.');
-                return saveuserSubscription(newSubscription);
+                return saveuserSubscription(newSubscription).then(
+                  () => {
+                    callback();
+                  }
+                );
               })
               .catch(function (e) {
                 if (Notification.permission !== 'granted') {
@@ -68,13 +69,18 @@ export function subscribeUserToPush() {
               });
           } else {
             console.info('Existing subscription detected.');
-            return saveuserSubscription(existingSubscription);
+            return saveuserSubscription(existingSubscription).then(
+              () => {
+                callback();
+              }
+            );
           }
         });
     });
   }
 }
-export function unsubscribeUser() {
+
+export function unsubscribeUserToPush(callback: () => void) {
   navigator.serviceWorker.ready.then(function (registration) {
     registration.pushManager
       .getSubscription()
@@ -82,6 +88,7 @@ export function unsubscribeUser() {
         if (subscription) {
           return removeUserSubscription(subscription).then(() => {
             console.info('User is unsubscribed.');
+            callback();
             return subscription.unsubscribe();
           });
         }
@@ -90,7 +97,11 @@ export function unsubscribeUser() {
         console.error('Error unsubscribing', error);
       })
       .then(function () {
-        console.info('User is unsubscribed.');
+        console.info('User is unsubscribed!!!');
+        callback();
+        alert(
+          'Now turn off the notifications from the site settings to stop receiving notifications!'
+        );
       });
   });
 }

@@ -141,7 +141,6 @@ const subscribe = async (req, res) => {
       (sub) => sub.endpoint === endpoint
     );
 
-    console.log('Subscription already exists for user');
     if (existingSubscription) {
       return res.status(200).send('Subscription already exists');
     }
@@ -166,6 +165,8 @@ const subscribe = async (req, res) => {
 const unsubscribe = async (req, res) => {
   const { endpoint } = req.body;
   const user = req.user;
+
+  console.log(req.body);
 
   const userDoc = await User.findById(user.userId);
 
@@ -193,6 +194,8 @@ const unsubscribe = async (req, res) => {
       .send('Something went wrong while removing the subscription');
   }
 
+  console.log('Subscription removed');
+
   res.status(200).send('Subscription removed');
 };
 
@@ -200,4 +203,5 @@ module.exports = {
   login,
   register,
   subscribe,
+  unsubscribe,
 };

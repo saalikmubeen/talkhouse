@@ -5,6 +5,7 @@ const {
   login,
   register,
   subscribe,
+  unsubscribe,
 } = require('../controllers/auth.controller');
 const Joi = require('joi');
 const validator = require('express-joi-validation').createValidator(
@@ -51,6 +52,14 @@ router.post(
   requireAuth,
   // validator.body(subscriptionSchema),
   subscribe
+);
+
+// Unsubscribe the user from push notifications
+router.post(
+  '/unsubscribe',
+  requireAuth,
+  // validator.body(subscriptionSchema),
+  unsubscribe
 );
 
 // test route for requireAuth middleware
