@@ -5,6 +5,7 @@ import { showAlert } from "./alertActions";
 import { resetChatAction } from "./chatActions";
 import { resetFriendsAction } from "./friendActions";
 import {actionTypes, CurrentUser} from "./types";
+import { unsubscribeUserToPush } from "../notifications";
 
 
 export const loginUser = (credentials: LoginArgs) => {
@@ -25,14 +26,14 @@ export const loginUser = (credentials: LoginArgs) => {
                 payload: response.userDetails
             })
 
-           dispatch(
-               showAlert(
-                   `Hi, ${response.userDetails.username} 👋. Welcome back.`
-               )
-           );
+          dispatch(
+              showAlert(
+                `Hi, ${response.userDetails.username} 👋. Welcome back.`
+              )
+          );
         }
     }
-} 
+}
 
 
 
@@ -64,7 +65,7 @@ export const registerUser = (credentials: RegisterArgs) => {
             );
         }
     };
-}; 
+};
 
 
 export const autoLogin = () => {
@@ -108,8 +109,12 @@ export const autoLogin = () => {
 
 
 export const logoutUser = () => {
-    return async (dispatch: Dispatch) => {
-        localStorage.removeItem("currentUser");
+  return async (dispatch: Dispatch) => {
+
+        unsubscribeUserToPush(() => {
+          localStorage.removeItem('currentUser');
+        });
+
         dispatch({
             type: actionTypes.logout,
         });
