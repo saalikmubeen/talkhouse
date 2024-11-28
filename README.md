@@ -87,6 +87,17 @@ docker-compose up --build
 
 *Make sure you have docker installed*
 
+# Testimonials
+
+> Thanks everyone for trying out the app!
+
+|     |     |
+|-----|-----|
+| ![image](https://github.com/saalikmubeen/talkhouse/blob/main/screenshots/screenshot_1.png?raw=true)  | ![image](https://github.com/saalikmubeen/talkhouse/blob/main/screenshots/screenshot_2.png?raw=true)   |
+| ![image](https://github.com/saalikmubeen/talkhouse/blob/main/screenshots/screenshot_3.png?raw=true)  | ![image](https://github.com/saalikmubeen/talkhouse/blob/main/screenshots/screenshot_4.png?raw=true)   |
+| ![image](https://github.com/saalikmubeen/talkhouse/blob/main/screenshots/screenshot_5.png?raw=true)  | ![image](https://github.com/saalikmubeen/talkhouse/blob/main/screenshots/screenshot_6.png?raw=true)   |
+| ![image](https://github.com/saalikmubeen/talkhouse/blob/main/screenshots/screenshot_7.png?raw=true)  | ![image](https://github.com/saalikmubeen/talkhouse/blob/main/screenshots/screenshot_8.png?raw=true)   |
+
 # TODOS
 
 - [x]  Enable group video and messaging functionality
